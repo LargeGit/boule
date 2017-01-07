@@ -1,7 +1,6 @@
 
 # pylint: disable=R0904
-PATH = 'C:\\Users\\jonba\\Desktop\\BouleData\\'
-EXTENSION = '.pickle'
+
 
 
 

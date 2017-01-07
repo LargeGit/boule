@@ -1,5 +1,6 @@
 """docstring"""
 from boule import Boule
+import time
 
 
 class Ladder(Boule):
@@ -38,4 +39,5 @@ class Ladder(Boule):
     @ladder_name.setter
     def ladder_name(self, value):
         # TODO add any name validation here
+        self._modified = time.strftime("%d/%m/%Y %I:%M:%S")
         self._ladder_name = value

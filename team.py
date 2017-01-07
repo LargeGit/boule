@@ -1,6 +1,6 @@
 """docstring"""
 from boule import Boule
-
+import time
 
 class Team(Boule):
     """
@@ -39,13 +39,15 @@ class Team(Boule):
     @team_name.setter
     def team_name(self, value):
         # TODO add any name validation here
+        self._modified = time.strftime("%d/%m/%Y %I:%M:%S")
         self._team_name = value
 
     @property
     def team_ranking(self):
         return self._team_ranking
 
-    @property
+    @team_ranking.setter
     def team_ranking(self, value):
         # TODO add any name validation here
+        self._modified = time.strftime("%d/%m/%Y %I:%M:%S")
         self._team_ranking = value

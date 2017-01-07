@@ -1,5 +1,6 @@
 """docstring"""
 from boule import Boule
+import time
 
 
 class Match(Boule):
@@ -38,4 +39,5 @@ class Match(Boule):
     @match_name.setter
     def match_name(self, value):
         # TODO add any name validation here
+        self._modified = time.strftime("%d/%m/%Y %I:%M:%S")
         self._match_name = value

@@ -49,6 +49,7 @@ class Account(Boule):
     @first_name.setter
     def first_name(self, value):
         # TODO add any name validation here
+        self._modified = time.strftime("%d/%m/%Y %I:%M:%S")
         self._first_name = value
 
    @property
@@ -58,6 +59,7 @@ class Account(Boule):
     @second_name.setter
     def second_name(self, value):
         # TODO add any name validation here
+        self._modified = time.strftime("%d/%m/%Y %I:%M:%S")
         self._second_name = value
 
    @property
@@ -67,6 +69,7 @@ class Account(Boule):
     @role.setter
     def role(self, value):
         # TODO add any name validation here
+        self._modified = time.strftime("%d/%m/%Y %I:%M:%S")
         self._role = value
 
    @property
@@ -76,6 +79,7 @@ class Account(Boule):
     @nickname.setter
     def nickname(self, value):
         # TODO add any name validation here
+        self._modified = time.strftime("%d/%m/%Y %I:%M:%S")        
         self._nickname = value
 
     @property
@@ -85,6 +89,7 @@ class Account(Boule):
     @email.setter
     def email(self, value):
         # TODO add any name validation here
+        self._modified = time.strftime("%d/%m/%Y %I:%M:%S")
         self._email = value
 
     @property
@@ -94,6 +99,7 @@ class Account(Boule):
     @mobile.setter
     def mobile(self, value):
         # TODO add any name validation here
+        self._modified = time.strftime("%d/%m/%Y %I:%M:%S")
         self._mobile = value
 
     @property
@@ -103,6 +109,7 @@ class Account(Boule):
     @ranking.setter
     def ranking(self, value):
         # TODO add any name validation here
+        self._modified = time.strftime("%d/%m/%Y %I:%M:%S")
         self._ranking = value
 
         

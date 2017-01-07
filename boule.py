@@ -9,6 +9,9 @@ class Boule:
     STATUS = {"active": "active", "deleted": "deleted", "suspended": "suspended",
     "hold": "hold", "pending": "pending", "complete": "complete"}
     
+    PATH = 'C:\\Users\\jonba\\Desktop\\BouleData\\'
+    EXTENSION = '.pickle'
+
     def __init__(self):
         """Cover the common action for any new Account/Team/Match/Ladder object instantiation
         """
@@ -18,11 +21,6 @@ class Boule:
     @property
     def modified(self):
         return self._modified
-
-    @modified.setter
-    def modified(self, value):
-        # TODO check vaue is a valid date object
-        self._modified = value
 
     @property
     def created(self):
@@ -36,9 +34,6 @@ class Boule:
     def status(self, value):
         # TODO check vaue is a valid date object
         self._modified = value
-
-
-
 
     @classmethod
     def get_by_id(cls, id, *status):
