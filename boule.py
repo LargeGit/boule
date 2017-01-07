@@ -4,39 +4,49 @@ import time
 import pickle
 import os
 
-
 class Boule:
     """Docstring"""
-    # pylint: disable=R0904
-    PATH = 'C:\\Users\\jonba\\Desktop\\BouleData\\'
-    EXTENSION = '.pickle'
-
-    STATUS = {"active": "active", "deleted": "deleted", "suspended": "suspended"}
-    STATUS["hold"] = "hold"
-    STATUS["pending"] = "pending"
-    STATUS["complete"] = "complete"
-
-    ROLES = {"admin": "admin", "user": "user", "viewer": "viewer"}
-
-    MAX_TEAM_SIZE = 3
-    MAX_TEAMS_IN_MATCH = 2
-    DEFAULT_LADDER_ID = "40000001"
-    DEFAULT_RANKING = 1600
-
-    def __init__(self, my_dict):
+    STATUS = {"active": "active", "deleted": "deleted", "suspended": "suspended",
+    "hold": "hold", "pending": "pending", "complete": "complete"}
+    
+    def __init__(self):
         """Cover the common action for any new Account/Team/Match/Ladder object instantiation
         """
-        self.name = my_dict["name"]
-        self.modified = self.created = time.strftime("%d/%m/%Y %I:%M:%S")
-        self.status = Boule.STATUS["active"]
-        
+        self._modified = self._created = time.strftime("%d/%m/%Y %I:%M:%S")
+        self._status = Boule.STATUS["active"]
+
+    @property
+    def modified(self):
+        return self._modified
+
+    @modified.setter
+    def modified(self, value):
+        # TODO check vaue is a valid date object
+        self._modified = value
+
+    @property
+    def created(self):
+        return self._created
+
+    @property
+    def status(self):
+        return self._status
+
+    @status.setter
+    def status(self, value):
+        # TODO check vaue is a valid date object
+        self._modified = value
+
+
+
+
     @classmethod
-    def get_by_id(cls, s_id, *status):
-        if s_id not in cls.table:
+    def get_by_id(cls, id, *status):
+        if id not in cls.table:
             return False
-        if status and cls.table[s_id]["status"] != status:
+        if status and cls.table[id]["status"] != status:
             return False
-        return {s_id: cls.table[s_id]}
+        return {id: cls.table[id]}
         
     @classmethod
     def get_all(cls, **kwargs):
@@ -116,21 +126,21 @@ class Boule:
             return False
 
     @classmethod
-    def id_exists(cls, s_id):
+    def id_exists(cls, id):
         """@classmethod to determine if a particular id exists in the table
         """
-        if s_id in cls.table:
+        if id in cls.table:
             return True
         else:
             return False
 
     @classmethod
-    def delete(cls, s_id):
+    def delete(cls, id):
         """@classmethod to delete a row from the table (item from the list)"""
-        if s_id not in cls.table:
+        if id not in cls.table:
             return False
         else:
-            cls.table[s_id]["status"] = Boule.STATUS["deleted"]
+            cls.table[id]["status"] = Boule.STATUS["deleted"]
             return True
 
     @classmethod
@@ -260,4 +270,4 @@ class Boule:
         """return a list of all id numbers
         filtered by status, if provided
         """
-        return self.s_id
+        return self.id

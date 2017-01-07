@@ -17,12 +17,25 @@ class Ladder(Boule):
 
     # table is the list that contains all the data for this class
     # Do not expose direcly out of this class, only via accessor
-    table = {}
+
     meta = {"unique_id": 40000000, "author": "large", "version": "1.0.0", "last_saved": ""}
 
     # initialise a new ladder
-    def __init__(self, my_dict):
-        super().__init__(my_dict)
+    def __init__(self, ladder_name="---"):
+        super().__init__()
         Ladder.meta["unique_id"] += 1
-        Ladder.table[str(Ladder.meta["unique_id"])] = self.__dict__
-        self.s_id = str(Ladder.meta["unique_id"])
+        self._id = str(Ladder.meta["unique_id"])
+        self._ladder_name = ladder_name
+
+   @property
+    def id(self):
+        return self._id 
+
+    @property
+    def ladder_name(self):
+        return self._ladder_name
+
+    @ladder_name.setter
+    def ladder_name(self, value):
+        # TODO add any name validation here
+        self._ladder_name = value

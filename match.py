@@ -17,12 +17,25 @@ class Match(Boule):
 
     # table is the list that contains all the data for this class
     # Do not expose direcly out of this class, only via accessor
-    table = {}
+
     meta = {"unique_id": 30000000, "author": "large", "version": "1.0.0", "last_saved": ""}
 
     # initialise a new match
-    def __init__(self, my_dict):
-        super().__init__(my_dict)
-        Match.meta["unique_id"] += 1
-        Match.table[str(Match.meta["unique_id"])] = self.__dict__
-        self.s_id = str(Match.meta["unique_id"])
+    def __init__(self, match_name="---"):
+        super().__init__()
+        Ladder.meta["unique_id"] += 1
+        self._id = str(Ladder.meta["unique_id"])
+        self._match_name = match_name
+
+   @property
+    def id(self):
+        return self._id 
+
+    @property
+    def match_name(self):
+        return self._match_name
+
+    @match_name.setter
+    def match_name(self, value):
+        # TODO add any name validation here
+        self._match_name = value
