@@ -23,10 +23,12 @@ class Account(Boule):
     # Do not expose direcly out of this class, only via accessor
     table = {}
     meta = {"unique_id": 10000000, "author": "large", "version": "1.0.0", "last_saved": ""}
+    
+    ROLES = {"admin": "admin", "user": "user", "viewer": "viewer"}
 
     # initialise a new account
     def __init__(self, first_name="---", second_name="---",
-        role=Account.USER, nickname="---", email="---", mobile="---", ranking=0):
+            role=Account.USER, nickname="---", email="---", mobile="---", ranking=0):
         super().__init__()
         Account.meta["unique_id"] += 1
         self._id = str(Account.meta["unique_id"])
@@ -61,6 +63,10 @@ class Account(Boule):
         # TODO add any name validation here
         self._modified = time.strftime("%d/%m/%Y %I:%M:%S")
         self._second_name = value
+    
+    @property
+    def full_name(self):
+        return self._first_name + " " + self._second_name
 
    @property
     def role(self):

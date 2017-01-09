@@ -8,6 +8,10 @@ from library import *
 
 import setup_db
 
+import helper as help
+
+tables = {"account":accounts, "team":teams, "match":matches, "ladder":ladders}
+
 BASIC_PARAM_SET = {'name': '', 'second_name': '', 'nickname': '', 'email': '',
                    'mobile': '', 'ranking': Boule.DEFAULT_RANKING,
                    'proliferate': False}
@@ -71,9 +75,10 @@ get /account|team|match|ladder/modifed&since=datestring
 
 @route('/<table:re:account|team|match|ladder>/', method='GET')
 @route('/<table:re:account|team|match|ladder>', method='GET')
-def list_all_tables(table):
+def list_all(table):
     """docstring"""
-    result = read_tables(table=table)
+    result_list = sorted(tables[table])
+    result_dict = {"id":result_list}
     s_result = ""
     if not result:
         return "<p>" + '{}' + "</p>"
@@ -86,7 +91,7 @@ def list_all_tables(table):
 @route('/<table:re:account|team|match|ladder>/<status:re:active|deleted|suspended|hold|pending|complete>', method='GET')
 def list_all_tables_status(table, status):
     """docstring"""
-    result = read_tables(table=table, status=status)
+    result_list = help.get_items_by_value(tables[table], "status", status)
     s_result = ""
     if not result:
         return "<p>" + '{}' + "</p>"
