@@ -77,117 +77,109 @@ get /account|team|match|ladder/modifed&since=datestring
 @route('/<table:re:account|team|match|ladder>', method='GET')
 def list_all(table):
     """docstring"""
-    result_list = sorted(tables[table])
-    result_dict = {"id":result_list}
-    s_result = ""
-    if not result:
-        return "<p>" + '{}' + "</p>"
-    for key in sorted(result, reverse=True):
-        s_result = s_result + "<p>" + json.dumps({key: result[key]}, indent=2) + "</p>"
-    return s_result
+    result = ""
+    for item in tables[table]:
+        result += json.dumps(item.__dict__, indent=2)
+    return result
 
 
 @route('/<table:re:account|team|match|ladder>/<status:re:active|deleted|suspended|hold|pending|complete>/', method='GET')
 @route('/<table:re:account|team|match|ladder>/<status:re:active|deleted|suspended|hold|pending|complete>', method='GET')
-def list_all_tables_status(table, status):
+def list_all_by_status(table, status):
     """docstring"""
     result_list = help.get_items_by_value(tables[table], "status", status)
-    s_result = ""
-    if not result:
-        return "<p>" + '{}' + "</p>"
-    for key in sorted(result, reverse=True):
-        s_result = s_result + "<p>" + json.dumps({key: result[key]}, indent=2) + "</p>"
-    return s_result
+    result = ""
+    for item in result_list:
+        result += json.dumps(item.__dict__, indent=2)
+    return result
 
 
 @route('/<table:re:account|team|match|ladder>/<i_id:int>/', method='GET')
 @route('/<table:re:account|team|match|ladder>/<i_id:int>', method='GET')
 def list_table_by_id(table, i_id):
     """docstring"""
-    my_id = str(i_id)
-    result = read_tables(table=table, my_id=my_id)
-    if result:
-        return "<p>" + json.dumps(result, indent=2) + "</p>"
-    else:
-        return "<p>ID not found</p>"
+    result_list = get_item_by_id(tables[table], str(i_id))
+    result = ""
+    for item in result_list:
+        result += json.dumps(item.__dict__, indent=2)
+    return result
 
 
 @route('/<table:re:account|team|match|ladder>/total/', method='GET')
 @route('/<table:re:account|team|match|ladder>/total', method='GET')
 def get_size_of_table(table):
     """docstring"""
-    result = size_of_table(table=table)
-    if result:
-        return json.dumps({'size': result}, indent=2)
-    else:
-        return json.dumps({'size': 0}, indent=2)
+    return str(len(tables[table]))
 
 
 @route('/<table:re:account|team|match|ladder>/<status:re:active|deleted|suspended|hold|pending|complete>/total/', method='GET')
 @route('/<table:re:account|team|match|ladder>/<status:re:active|deleted|suspended|hold|pending|complete>/total', method='GET')
 def get_size_of_table_status(table, status):
     """docstring"""
-    result = size_of_table(table=table, status=status)
-    if result:
-        return json.dumps({'size': result}, indent=2)
-    else:
-        return json.dumps({'size': 0}, indent=2)
+    result_list = help.get_items_by_value(tables[table], "status", status)
+    return str(len(result_list))
 
 
 @route('/account/<i_id:int>/teams/', method='GET')
 @route('/account/<i_id:int>/teams', method='GET')
-def list_teams_for_account(i_id):
+def get_teams_for_account(i_id):
     """docstring"""
-    my_id = str(i_id)
-    result = get_teams_per_account(my_id=my_id)
-    s_result = ""
-    if not result:
-        return "<p>{}</p>"
-    for key in sorted(result, reverse=True):
-        s_result = s_result + "<p>" + json.dumps({key: result[key]}, indent=2) + "</p>"
-    return s_result
-
-
-@route('/team/<i_id:int>/matches/', method='GET')
-@route('/team/<i_id:int>/matches', method='GET')
-def list_matches_for_team(i_id):
-    """docstring"""
-    my_id = str(i_id)
-    result = get_matches_per_team(my_id=my_id)
-    s_result = ""
-    if not result:
-        return "<p>{}</p>"
-    for key in sorted(result, reverse=True):
-        s_result = s_result + "<p>" + json.dumps({key: result[key]}, indent=2) + "</p>"
-    return s_result
+    # get all team lookups for given account id
+    results_list = help.get_items_by_value(account_teams_list, "id1", str(i_id))
+    result = ""
+    # for each team lookup, pull the team id, and get the associated team data
+    # put the result in a json formatted string
+    for item in result_list:
+        team = help.get_item_by_id(teams, item.id2)
+        result += json.dumps(team.__dict__, indent=2)
+    return result
 
 
 @route('/team/<i_id:int>/accounts/', method='GET')
 @route('/team/<i_id:int>/accounts', method='GET')
-def list_accounts_for_team(i_id):
+def get_accounts_for_team(i_id):
     """docstring"""
-    my_id = str(i_id)
-    result = get_accounts_per_team(my_id=my_id)
-    s_result = ""
-    if not result:
-        return "<p>{}</p>"
-    for key in sorted(result, reverse=True):
-        s_result = s_result + "<p>" + json.dumps({key: result[key]}, indent=2) + "</p>"
-    return s_result
+    # get all account lookups for given team id
+    results_list = help.get_items_by_value(account_teams_list, "id2", str(i_id))
+    result = ""
+    # for each account lookup, pull the account instance, and get the associated data
+    # put the result in a json formatted string
+    for item in result_list:
+        team = help.get_item_by_id(accounts, item.id1)
+        result += json.dumps(team.__dict__, indent=2)
+    return result
 
 
 @route('/team/<i_id:int>/ladders/', method='GET')
 @route('/team/<i_id:int>/ladders', method='GET')
 def list_ladders_for_team(i_id):
     """docstring"""
-    my_id = str(i_id)
-    result = get_ladders_per_team(my_id=my_id)
-    s_result = ""
-    if not result:
-        return "<p>{}</p>"
-    for key in sorted(result, reverse=True):
-        s_result = s_result + "<p>" + json.dumps({key: result[key]}, indent=2) + "</p>"
-    return s_result
+    # get all ladder lookups for given team id
+    results_list = help.get_items_by_value(team_ladder_list, "id1", str(i_id))
+    result = ""
+    # for each lookup, pull the team instance, and get the associated data
+    # put the result in a json formatted string
+    for item in result_list:
+        team = help.get_item_by_id(ladders, item.id2)
+        result += json.dumps(team.__dict__, indent=2)
+    return result
+
+
+# TODO we have gotten to this point
+
+@route('/team/<i_id:int>/matches/', method='GET')
+@route('/team/<i_id:int>/matches', method='GET')
+def get_matches_for_team(i_id):
+    """docstring"""
+    # get all account lookups for given team id
+    results_list = help.get_items_by_value(account_teams_list, "id2", str(i_id))
+    result = ""
+    # for each account lookup, pull the account id, and get the associated account data
+    # put the result in a json formatted string
+    for item in result_list:
+        team = help.get_item_by_id(accounts, item.id1)
+        result += json.dumps(team.__dict__, indent=2)
+    return result
 
 
 @route('/match/<i_id:int>/teams/', method='GET')

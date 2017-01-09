@@ -25,18 +25,18 @@ class Lookup(Boule):
     meta = {"unique_id": 0, "author": "large", "version": "1.0.0", "last_saved": ""}
 
     # initialise a new match/ladder combination
-    def __init__(self, id_one, id_many):
-        self._id_one = id_one
-        self._id_many = id_many
+    def __init__(self, id1, id2):
+        self._id1 = id1
+        self._id2 = id2
 
     @property
-    def id_one(self):
-        return self._id_one
+    def id1(self):
+        return self._id1
 
     @property
-    def id_many(self):
-        return self._id_many
+    def id2(self):
+        return self._id2
 
     @property
     def id_pair(self):
-        return [self._id_one, self._id_many]
+        return [self._id1, self._id2]
