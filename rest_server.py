@@ -164,9 +164,7 @@ def list_ladders_for_team(i_id):
         result += json.dumps(team.__dict__, indent=2)
     return result
 
-
-# TODO we have gotten to this point
-
+# TODO this one needs finalising
 @route('/team/<i_id:int>/matches/', method='GET')
 @route('/team/<i_id:int>/matches', method='GET')
 def get_matches_for_team(i_id):
@@ -181,7 +179,7 @@ def get_matches_for_team(i_id):
         result += json.dumps(team.__dict__, indent=2)
     return result
 
-
+# TODO this one needs finalising
 @route('/match/<i_id:int>/teams/', method='GET')
 @route('/match/<i_id:int>/teams', method='GET')
 def list_teams_for_match(i_id):
@@ -200,44 +198,47 @@ def list_teams_for_match(i_id):
 @route('/match/<i_id:int>/ladders', method='GET')
 def list_ladders_for_match(i_id):
     """docstring"""
-    my_id = str(i_id)
-    result = get_ladders_per_match(my_id=my_id)
-    s_result = ""
-    if not result:
-        return "<p>{}</p>"
-    for key in sorted(result, reverse=True):
-        s_result = s_result + "<p>" + json.dumps({key: result[key]}, indent=2) + "</p>"
-    return s_result
+    # get all account lookups for given team id
+    results_list = help.get_items_by_value(ladder_matches_list, "id2", str(i_id))
+    result = ""
+    # for each account lookup, pull the account id, and get the associated account data
+    # put the result in a json formatted string
+    for item in result_list:
+        team = help.get_item_by_id(ladders, item.id1)
+        result += json.dumps(team.__dict__, indent=2)
+    return result
 
 
 @route('/ladder/<i_id:int>/teams/', method='GET')
 @route('/ladder/<i_id:int>/teams', method='GET')
 def list_teams_for_ladder(i_id):
     """docstring"""
-    my_id = str(i_id)
-    result = get_teams_per_ladder(my_id=my_id)
-    s_result = ""
-    if not result:
-        return "<p>{}</p>"
-    for key in sorted(result, reverse=True):
-        s_result = s_result + "<p>" + json.dumps({key: result[key]}, indent=2) + "</p>"
-    return s_result
+    # get all account lookups for given team id
+    results_list = help.get_items_by_value(team_ladders_list, "id2", str(i_id))
+    result = ""
+    # for each account lookup, pull the account id, and get the associated account data
+    # put the result in a json formatted string
+    for item in result_list:
+        team = help.get_item_by_id(teams, item.id1)
+        result += json.dumps(team.__dict__, indent=2)
+    return result
 
 
 @route('/ladder/<i_id:int>/matches/', method='GET')
 @route('/ladder/<i_id:int>/matches', method='GET')
 def list_matches_for_ladder(i_id):
     """docstring"""
-    my_id = str(i_id)
-    result = get_matches_per_ladder(my_id=my_id)
-    s_result = ""
-    if not result:
-        return "<p>{}</p>"
-    for key in sorted(result, reverse=True):
-        s_result = s_result + "<p>" + json.dumps({key: result[key]}, indent=2) + "</p>"
-    return s_result
+    # get all account lookups for given team id
+    results_list = help.get_items_by_value(ladder_matches_list, "id1", str(i_id))
+    result = ""
+    # for each account lookup, pull the account id, and get the associated account data
+    # put the result in a json formatted string
+    for item in result_list:
+        team = help.get_item_by_id(matches, item.id2)
+        result += json.dumps(team.__dict__, indent=2)
+    return result
 
-
+# TODO fix this one
 @route('/database/', method='GET')
 @route('/database', method='GET')
 def get_database():
@@ -245,7 +246,7 @@ def get_database():
     load_all_tables()
     return json.dumps({"response": 'database loaded'}, indent=2)
 
-
+# TODO fix this one
 @route('/event/', method='GET')
 @route('/event', method='GET')
 def get_event():
@@ -256,7 +257,7 @@ def get_event():
         s_result = s_result + "<p>" + json.dumps({key: result[key]}, indent=2) + "</p>"
     return s_result
 
-
+# TODO fix this one
 @route('/event/<event_id:int>/', method='GET')
 @route('/event/<event_id:int>', method='GET')
 def get_event_id(event_id):
@@ -268,7 +269,7 @@ def get_event_id(event_id):
     else:
         return "<p>ID not found</p>"
 
-
+# TODO fix this one
 @route('/event/total/', method='GET')
 @route('/event/total', method='GET')
 def total_event_id():
@@ -288,7 +289,6 @@ post /account/ create a new account
 post /team/    create a new team        
 NOTE: currently only id supported not name
 """
-
 
 @route('/<table:re:account|team|match|ladder>', method='POST')
 @route('/<table:re:account|team|match|ladder>/', method='POST')
