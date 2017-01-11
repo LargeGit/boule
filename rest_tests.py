@@ -9,8 +9,8 @@ import create_db
 print("import of db complete, now doing the REST stuff")
 
 BASE_URL = 'http://localhost:8080'
-BASE = {"name": "--", "second_name": "--", "nickname": "--", "email": "--",
-        "mobile": "--", "ranking": 1600, "proliferate": True}
+BASE = {"name": "---", "second_name": "---", "nickname": "---", "email": "---",
+        "mobile": "---", "ranking": 1600, "role": 1}
 PROXIES = {"http": None}
 """
 Create a mini league with one ladder, 8 accounts, 10 teams, and 20 random matches etc

@@ -4,11 +4,11 @@ TODO: is this thread safe?
 import json
 from bottle import route, run, request
 import io
-from library import *
+# from library import *
+import data
+import helper as help
 
 import setup_db
-
-import helper as help
 
 tables = {"account":accounts, "team":teams, "match":matches, "ladder":ladders}
 
@@ -75,7 +75,7 @@ get /account|team|match|ladder/modifed&since=datestring
 
 @route('/<table:re:account|team|match|ladder>/', method='GET')
 @route('/<table:re:account|team|match|ladder>', method='GET')
-def list_all(table):
+def get_all(table):
     """docstring"""
     result = ""
     for item in tables[table]:
@@ -85,7 +85,7 @@ def list_all(table):
 
 @route('/<table:re:account|team|match|ladder>/<status:re:active|deleted|suspended|hold|pending|complete>/', method='GET')
 @route('/<table:re:account|team|match|ladder>/<status:re:active|deleted|suspended|hold|pending|complete>', method='GET')
-def list_all_by_status(table, status):
+def get_all_by_status(table, status):
     """docstring"""
     result_list = help.get_items_by_value(tables[table], "status", status)
     result = ""
@@ -96,7 +96,7 @@ def list_all_by_status(table, status):
 
 @route('/<table:re:account|team|match|ladder>/<i_id:int>/', method='GET')
 @route('/<table:re:account|team|match|ladder>/<i_id:int>', method='GET')
-def list_table_by_id(table, i_id):
+def get_table_by_id(table, i_id):
     """docstring"""
     result_list = get_item_by_id(tables[table], str(i_id))
     result = ""
@@ -152,7 +152,7 @@ def get_accounts_for_team(i_id):
 
 @route('/team/<i_id:int>/ladders/', method='GET')
 @route('/team/<i_id:int>/ladders', method='GET')
-def list_ladders_for_team(i_id):
+def get_ladders_for_team(i_id):
     """docstring"""
     # get all ladder lookups for given team id
     results_list = help.get_items_by_value(team_ladder_list, "id1", str(i_id))
@@ -182,7 +182,7 @@ def get_matches_for_team(i_id):
 # TODO this one needs finalising
 @route('/match/<i_id:int>/teams/', method='GET')
 @route('/match/<i_id:int>/teams', method='GET')
-def list_teams_for_match(i_id):
+def get_teams_for_match(i_id):
     """docstring"""
     my_id = str(i_id)
     result = get_teams_per_match(my_id=my_id)
@@ -196,7 +196,7 @@ def list_teams_for_match(i_id):
 
 @route('/match/<i_id:int>/ladders/', method='GET')
 @route('/match/<i_id:int>/ladders', method='GET')
-def list_ladders_for_match(i_id):
+def get_ladders_for_match(i_id):
     """docstring"""
     # get all account lookups for given team id
     results_list = help.get_items_by_value(ladder_matches_list, "id2", str(i_id))
@@ -211,7 +211,7 @@ def list_ladders_for_match(i_id):
 
 @route('/ladder/<i_id:int>/teams/', method='GET')
 @route('/ladder/<i_id:int>/teams', method='GET')
-def list_teams_for_ladder(i_id):
+def get_teams_for_ladder(i_id):
     """docstring"""
     # get all account lookups for given team id
     results_list = help.get_items_by_value(team_ladders_list, "id2", str(i_id))
@@ -226,7 +226,7 @@ def list_teams_for_ladder(i_id):
 
 @route('/ladder/<i_id:int>/matches/', method='GET')
 @route('/ladder/<i_id:int>/matches', method='GET')
-def list_matches_for_ladder(i_id):
+def get_matches_for_ladder(i_id):
     """docstring"""
     # get all account lookups for given team id
     results_list = help.get_items_by_value(ladder_matches_list, "id1", str(i_id))
@@ -290,16 +290,58 @@ post /team/    create a new team
 NOTE: currently only id supported not name
 """
 
-@route('/<table:re:account|team|match|ladder>', method='POST')
-@route('/<table:re:account|team|match|ladder>/', method='POST')
-def post_table(table):
+@route('/account', method='POST')
+@route('/account/', method='POST')
+def post_new_account():
     """docstring"""
     bytesio_body_json = request.body                    # gives us a type<byteIO> object
     b_body_json = bytesio_body_json.getvalue()          # convert to type<byte> object
     s_body_json = b_body_json.decode(encoding="UTF-8")  # convert to string
-    d_body_json = json.loads(s_body_json)               # convert to dictionary
-    result = create_table(table, d_body_json)           # TODO: there must be a better way
-    return json.dumps({"response": result}, indent=2)
+    data_dict = json.loads(s_body_json)                 # convert to dictionary
+    temp_item = Account()
+    data.accounts.append(temp_item)
+    for key, value in data_dict:
+        setattr(temp_item, key, value)
+    return json.dumps({"response": "success"}, indent=2)
+
+@route('/team', method='POST')
+@route('/team/', method='POST')
+def post_new_team():
+    """docstring"""
+    bytesio_body_json = request.body                    # gives us a type<byteIO> object
+    b_body_json = bytesio_body_json.getvalue()          # convert to type<byte> object
+    s_body_json = b_body_json.decode(encoding="UTF-8")  # convert to string
+    data_dict = json.loads(s_body_json)                 # convert to dictionary
+    # FIXME insufficient checking    
+    temp_item = Team(data_dict["first_name"])
+    data.teams.append(temp_item)
+    return json.dumps({"response": "success"}, indent=2)
+
+@route('/ladder', method='POST')
+@route('/ladder/', method='POST')
+def post_new_ladder():
+    """docstring"""
+    bytesio_body_json = request.body                    # gives us a type<byteIO> object
+    b_body_json = bytesio_body_json.getvalue()          # convert to type<byte> object
+    s_body_json = b_body_json.decode(encoding="UTF-8")  # convert to string
+    data_dict = json.loads(s_body_json)                 # convert to dictionary
+    # FIXME insufficient checking
+    temp_item = Ladder(data_dict["first_name"])
+    data.ladders.append(temp_item)
+    return json.dumps({"response": "success"}, indent=2)
+
+@route('/match', method='POST')
+@route('/match/', method='POST')
+def post_new_match():
+    """docstring"""
+    bytesio_body_json = request.body                    # gives us a type<byteIO> object
+    b_body_json = bytesio_body_json.getvalue()          # convert to type<byte> object
+    s_body_json = b_body_json.decode(encoding="UTF-8")  # convert to string
+    data_dict = json.loads(s_body_json)                 # convert to dictionary
+    # FIXME insufficient checking
+    temp_item = Match(data_dict["first_name"])
+    data.matchs.append(temp_item)
+    return json.dumps({"response": "success"}, indent=2)
 
 """
 All the PUT commands
@@ -332,38 +374,29 @@ NOTE: currently only id supported not name
 @route('/ladder/<lid:int>/team/<tid:int>/', method='PUT')
 def put_team_in_ladder(lid, tid):
     """docstring"""
-    s_lid = str(lid)
-    s_tid = str(tid)
-    if add_team_to_ladder(s_lid, s_tid):
-        return json.dumps({"response": 'added successfully'}, indent=2)
-    else:
-        return json.dumps({"response": 'failed to update. One of both ids are invalid, or ladder is full'}, indent=2)
+    teams_ladders_list.append(tid, lid)
+    return True
+    # json.dumps({"response": 'failed to update. One of both ids are invalid, or ladder is full'}, indent=2)
 
 
 @route('/ladder/<lid:int>/match/<mid:int>', method='PUT')
 @route('/ladder/<lid:int>/match/<mid:int>/', method='PUT')
 def put_match_in_ladder(lid, mid):
     """docstring"""
-    s_lid = str(lid)
-    s_mid = str(mid)
-    if add_match_to_ladder(s_lid, s_mid):
-        return json.dumps({"response": 'added successfully'}, indent=2)
-    else:
-        return json.dumps({"response": 'failed to update. One of both ids are invalid'}, indent=2)
+    ladder_matches_list.append(lid, mid)
+    return True
+    # json.dumps({"response": 'failed to update. One of both ids are invalid, or ladder is full'}, indent=2)
 
 
 @route('/team/<tid:int>/account/<aid:int>', method='PUT')
 @route('/team/<tid:int>/account/<aid:int>/', method='PUT')
 def put_account_in_team(tid, aid):
     """docstring"""
-    s_tid = str(tid)
-    s_aid = str(aid)
-    if add_account_to_team(s_tid, s_aid):
-        return json.dumps({"response": 'added successfully'}, indent=2)
-    else:
-        return json.dumps({"response": 'failed to update. One of both ids are invalid'}, indent=2)
+    account_teams_list.append(aid, tid)
+    return True
+    # json.dumps({"response": 'failed to update. One of both ids are invalid, or ladder is full'}, indent=2)
 
-
+# TODO this needs sorting out
 @route('/match/<mid:int>/team/<tid:int>/<my_path:path>', method='PUT')
 @route('/match/<mid:int>/team/<tid:int>/<my_path:path>/', method='PUT')
 def put_team_in_match(mid, tid, my_path):
@@ -386,36 +419,27 @@ def put_team_in_match(mid, tid, my_path):
 @route('/<table:re:account|team|match|ladder>/<i_id:int>/status/<status:re:active|deleted|suspended|hold|pending|complete>', method='PUT')
 def put_table_status(table, i_id, status):
     """docstring"""
-    my_id = str(i_id)
-    if update_status(table=table, my_id=my_id, status=status):
-        return json.dumps({"response": 'status changed successfully'}, indent=2)
-    else:
-        return json.dumps({"response": 'failed to update status'}, indent=2)
+    temp_item = help.get_item_by_id(tables[table], str(i_id))
+    temp_item.setattr(tables[table], "status", status)
+    return json.dumps({"response": 'status changed successfully'}, indent=2)
 
 
 @route('/<table:re:team|match|ladder>/<i_id:int>/name/<name>/', method='PUT')
 @route('/<table:re:team|match|ladder>/<i_id:int>/name/<name>', method='PUT')
 def put_table_name(table, i_id, name):
     """docstring"""
-    my_id = str(i_id)
-    if update_name(table=table, my_id=my_id, name=name):
-        return json.dumps({"response": 'name changed successfully'}, indent=2)
-    else:
-        return json.dumps({"response": 'failed to update name'}, indent=2)
+    temp_item = help.get_item_by_id(tables[table], str(i_id))
+    temp_item.setattr(tables[table], "first_name", name)
+    return json.dumps({"response": 'name changed successfully'}, indent=2)
 
 
 @route('/<account>/<i_id:int>/name/<name>/', method='PUT')
 @route('/account>/<i_id:int>/name/<name>', method='PUT')
-def put_account_details(i_id):
+def put_account_name(table, i_id, name):
     """docstring"""
-    my_id = str(i_id)
-    bytesio_body_json = request.body                    # gives us a type<byteIO> object
-    b_body_json = bytesio_body_json.getvalue()          # convert to type<byte> object
-    s_body_json = b_body_json.decode(encoding="UTF-8")  # convert to string
-    d_body_json = json.loads(s_body_json)               # convert to dictionary
-    d_body_json["my_id"] = my_id
-    result = update_account_details(d_body_json)
-    return json.dumps({"response": result}, indent=2)
+    temp_item = help.get_item_by_id(accounts, str(i_id))
+    temp_item.setattr(accounts, "first_name", name)
+    return json.dumps({"response": 'name changed successfully'}, indent=2)
 
 
 @route('/database', method='PUT')

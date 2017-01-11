@@ -25,29 +25,29 @@ class Team(Boule):
         super().__init__()
         Team.meta["unique_id"] += 1
         self._id = str(Team.meta["unique_id"])
-        self._team_name = team_name
-        self._team_ranking = team_ranking
+        self._name = team_name
+        self._ranking = team_ranking
 
    @property
     def id(self):
         return self._id 
 
     @property
-    def team_name(self):
-        return self._team_name
+    def name(self):
+        return self._name
 
-    @team_name.setter
-    def team_name(self, value):
+    @name.setter
+    def name(self, value):
         # TODO add any name validation here
         self._modified = time.strftime("%d/%m/%Y %I:%M:%S")
-        self._team_name = value
+        self._name = value
 
     @property
-    def team_ranking(self):
+    def ranking(self):
         return self._team_ranking
 
-    @team_ranking.setter
-    def team_ranking(self, value):
+    @ranking.setter
+    def ranking(self, value):
         # TODO add any name validation here
         self._modified = time.strftime("%d/%m/%Y %I:%M:%S")
-        self._team_ranking = value
+        self._ranking = value

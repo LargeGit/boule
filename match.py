@@ -26,18 +26,18 @@ class Match(Boule):
         super().__init__()
         Ladder.meta["unique_id"] += 1
         self._id = str(Ladder.meta["unique_id"])
-        self._match_name = match_name
+        self._name = match_name
 
    @property
     def id(self):
         return self._id 
 
     @property
-    def match_name(self):
-        return self._match_name
+    def name(self):
+        return self._name
 
-    @match_name.setter
+    @mname.setter
     def match_name(self, value):
         # TODO add any name validation here
         self._modified = time.strftime("%d/%m/%Y %I:%M:%S")
-        self._match_name = value
+        self._name = value

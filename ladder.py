@@ -26,18 +26,18 @@ class Ladder(Boule):
         super().__init__()
         Ladder.meta["unique_id"] += 1
         self._id = str(Ladder.meta["unique_id"])
-        self._ladder_name = ladder_name
+        self._name = ladder_name
 
    @property
     def id(self):
         return self._id 
 
     @property
-    def ladder_name(self):
-        return self._ladder_name
+    def name(self):
+        return self._name
 
-    @ladder_name.setter
-    def ladder_name(self, value):
+    @lname.setter
+    def name(self, ladder_name):
         # TODO add any name validation here
         self._modified = time.strftime("%d/%m/%Y %I:%M:%S")
-        self._ladder_name = value
+        self._name = ladder_name
