@@ -6,8 +6,10 @@ from bottle import request, run, post, tob
 import io
 import json
 
+import helper as help
+
 BASE = {"name": "--", "second_name": "--", "nickname": "--", "email": "--",
-        "mobile": "--", "ranking": 1600, "proliferate": True}
+        "mobile": "--", "ranking": 1600, "role": 1}
 
 FIRST_NAMES = ['John', 'Sue', 'Bob', 'Steve', 'Andy', 'Dave', 'Dan', 'Simon',
                'Imogen', 'Keith', 'Eddy', 'Amanda', 'Trevor', 'Patrick', 'Sarah',
@@ -49,13 +51,13 @@ for index in range(4):
     set_up_post(body)
     s_response = post_new_ladder()
     result = json.loads(s_response)
-    assert type(result["response"]) == type(' ')
-    # assert result["response"] == str(40000001 + index), "return value is not correct"
+    assert type(result["id"]) == type(' ')
+    # assert result["id"] == str(40000001 + index), "return value is not correct"
 
 # create 20 accounts with teams in default ladder
 print("create 20 accounts with teams in default ladder")
 for index in range(20):
-    body = {**BASE, **{"name": FIRST_NAMES.pop(randint(0, 19 - index)),
+    body = {**BASE, **{"first_name": FIRST_NAMES.pop(randint(0, 19 - index)),
                        "second_name": SECOND_NAMES.pop(randint(0, 19-index)),
                        "nickname": NICKNAMES.pop(randint(0, 19-index)),
                        "email": str(randint(0, 99999))+"@"+str(randint(0, 99999)),
@@ -63,14 +65,22 @@ for index in range(20):
     set_up_post(body)
     s_response = post_new_account()
     result = json.loads(s_response)
-    # assert result["response"] == str(10000001 + index), "return value is not correct"
+    new_account = help.get_item_by_id(accounts, result["id"])
+    body["name"] = new_account.full_name + " team"
+    set_up_post(body)
+    s_response = post_new_team()
+    result = json.loads(s_response)
+    new_team = help.get_item_by_id(teams, result["id"])
+    put_account_in_team(new_account.id, new_team.id)
+    put_team_in_ladder(new_team.id, "40000001")
+
+    # assert result["id"] == str(10000001 + index), "return value is not correct"
     # TODO also check team exists, and that team is in ladder
 
 # create 10 without teams
 print("create 10 more accounts without teams")
-BASE['proliferate'] = False
 for index in range(10):
-    body = {**BASE, **{"name": FIRST_NAMES.pop(randint(0, 9-index)),
+    body = {**BASE, **{"first_name": FIRST_NAMES.pop(randint(0, 9-index)),
                        "second_name": SECOND_NAMES.pop(randint(0, 9-index)),
                        "nickname": NICKNAMES.pop(randint(0, 9-index)),
                        "email": str(randint(0, 99999))+"@"+str(randint(0, 99999)),
@@ -78,7 +88,7 @@ for index in range(10):
     set_up_post(body)
     s_response = post_new_account()
     result = json.loads(s_response)
-    # assert result["response"] == str(10000021 + index), "return value is not correct"
+    # assert result["id"] == str(10000021 + index), "return value is not correct"
     # TODO also check team exists, and that team is in ladder
 
 # create 20 more teams
@@ -88,7 +98,7 @@ for index in range(20):
     set_up_post(body)
     s_response = post_new_team()
     result = json.loads(s_response)
-    # assert result["response"] == str(20000021 + index), "return value is not correct"
+    # assert result["id"] == str(20000021 + index), "return value is not correct"
 
 # we now have 40 teams, 30 accounts(10 without teams), and 4 ladders
 print("we now have 40 teams, 30 accounts(10 without teams), and 4 ladders")
@@ -110,14 +120,14 @@ for index in range(60):
     set_up_post(body)
     s_response = post_new_match()
     mid = json.loads(s_response)
-    # assert mid["response"] == str(30000001 + index), "return value is not correct"
+    # assert mid["id"] == str(30000001 + index), "return value is not correct"
     team_list = [x for x in range(1, 41)]
     tid = str(20000000 + team_list.pop(randint(0, 39)))
     my_path = str(randint(0, 13)) + "/" + str(randint(0, 13)) + "/" + str(randint(0, 13))
-    put_team_in_match(mid["response"], tid, my_path)
+    put_team_in_match(mid["id"], tid, my_path)
     tid = str(20000000 + team_list.pop(randint(0, 38)))
     my_path = str(randint(0, 13)) + "/" + str(randint(0, 13)) + "/" + str(randint(0, 13))
-    put_team_in_match(mid["response"], tid, my_path)
+    put_team_in_match(mid["id"], tid, my_path)
 
 # scatter 60 matches over 4 ladders
 print("Scattering 60 matches over 4 ladders")

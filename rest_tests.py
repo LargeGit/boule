@@ -4,10 +4,6 @@ import json
 from random import randint
 import requests
 
-import create_db
-
-print("import of db complete, now doing the REST stuff")
-
 BASE_URL = 'http://localhost:8080'
 BASE = {"name": "---", "second_name": "---", "nickname": "---", "email": "---",
         "mobile": "---", "ranking": 1600, "role": 1}
@@ -45,21 +41,40 @@ for index in range(4):
     body = {**BASE, **{"name": LADDER_NAMES.pop(randint(0, 3-index))}}
     s_body_json = json.dumps(body, indent=2)
     r = requests.post(BASE_URL + RESOURCE, proxies=PROXIES, data=s_body_json)
+print("4 ladders created")
 
 # create 20 accounts with teams in default ladder
-RESOURCE = '/account'
 for index in range(20):
-    body = {**BASE, **{"name": FIRST_NAMES.pop(randint(0, 19-index)),
+    body = {**BASE, **{"first_name": FIRST_NAMES.pop(randint(0, 19-index)),
                        "second_name": SECOND_NAMES.pop(randint(0, 19-index)),
                        "nickname": NICKNAMES.pop(randint(0, 19-index)),
                        "email": "email@address", "mobile": str(randint(0, 999999999))}}
+    RESOURCE = '/account'
     s_body_json = json.dumps(body, indent=2)
     r = requests.post(BASE_URL + RESOURCE, proxies=PROXIES, data=s_body_json)
+    new_acc_id = r.json()["id"]
+    # get new account data
+    RESOURCE = '/account/' + new_acc_id
+    r = requests.get(BASE_URL + RESOURCE, proxies=PROXIES)
+    new_team_name = r.json()["_first_name"] + " " + r.json()["_second_name"] + " team"
+    # create new team
+    body = {"name": new_team_name}
+    RESOURCE = '/team'
+    s_body_json = json.dumps(body, indent=2)
+    r = requests.post(BASE_URL + RESOURCE, proxies=PROXIES, data=s_body_json)
+    new_team_id = r.json()["id"]
+    # put account in team
+    RESOURCE = '/team/' + new_team_id + '/account/' + new_acc_id + '/'
+    r = requests.put(BASE_URL + RESOURCE, proxies=PROXIES)
+    # put team in ladder
+    RESOURCE = '/ladder/40000001/team/' + new_team_id + "/"
+    r = requests.put(BASE_URL + RESOURCE, proxies=PROXIES)
+print("20 accounts/teams created and put in default ladder")    
 
+RESOURCE = '/account'
 # create 10 without teams
-BASE['proliferate'] = False
 for index in range(10):
-    body = {**BASE, **{"name": FIRST_NAMES.pop(randint(0, 9-index)),
+    body = {**BASE, **{"first_name": FIRST_NAMES.pop(randint(0, 9-index)),
                        "second_name": SECOND_NAMES.pop(randint(0, 9-index)),
                        "nickname": NICKNAMES.pop(randint(0, 9-index)),
                        "email": "email@address", "mobile": str(randint(0, 999999999))}}
@@ -78,20 +93,20 @@ for index in range(20):
 # put the last 20 teams in a random ladder and random accounts in the teams
 for index in range(21, 40):
     tid = str(20000000 + index)
-    RESOURCE = '/ladder/' + str(40000000 + randint(1, 4)) + "/team/" + tid + "/"
+    RESOURCE = '/ladder/' + str(40000000 + randint(1, 4)) + '/team/' + tid + '/'
     r = requests.put(BASE_URL + RESOURCE, proxies=PROXIES)
-    RESOURCE = '/team/' + tid + "/account/" + str(10000000 + randint(1, 30)) + "/"
+    RESOURCE = '/team/' + tid + '/account/' + str(10000000 + randint(1, 30)) + '/'
     r = requests.put(BASE_URL + RESOURCE, proxies=PROXIES)
-    RESOURCE = '/team/' + tid + "/account/" + str(10000000 + randint(1, 30)) + "/"
+    RESOURCE = '/team/' + tid + '/account/' + str(10000000 + randint(1, 30)) + '/'
     r = requests.put(BASE_URL + RESOURCE, proxies=PROXIES)
-    RESOURCE = '/team/' + tid + "/account/" + str(10000000 + randint(1, 30)) + "/"
+    RESOURCE = '/team/' + tid + '/account/' + str(10000000 + randint(1, 30)) + '/'
     r = requests.put(BASE_URL + RESOURCE, proxies=PROXIES)
 
 # create 60 matches
 for index in range(60):
     body = {**BASE, **{"name": "match" + str(index+1).zfill(2)}}
     s_body_json = json.dumps(body, indent=2)
-    RESOURCE = "/match"
+    RESOURCE = '/match/'
     r = requests.post(BASE_URL + RESOURCE, proxies=PROXIES, data=s_body_json)
 
 # put 2 teams with random number of scores in every match
@@ -100,18 +115,18 @@ for index in range(60):
     no_of_scores = randint(1, 5)
     team_list = [x + 1 for x in range(0, 40)]
     tid = str(20000000 + team_list.pop(randint(0, 39)))
-    score = "/".join([str(randint(0, 13)) for item in range(no_of_scores)])
-    RESOURCE = "/match/" + mid + "/team/" + tid + "/" + score + "/"
+    score = '/'.join([str(randint(0, 13)) for item in range(no_of_scores)])
+    RESOURCE = '/match/' + mid + '/team/' + tid + '/' + score + '/'
     r = requests.put(BASE_URL + RESOURCE, proxies=PROXIES)
     tid = str(20000000 + team_list.pop(randint(0, 38)))
-    score = "/".join([str(randint(0, 13)) for item in range(no_of_scores)])
-    RESOURCE = "/match/" + mid + "/team/" + tid + "/" + score
+    score = '/'.join([str(randint(0, 13)) for item in range(no_of_scores)])
+    RESOURCE = '/match/' + mid + '/team/' + tid + '/' + score
     r = requests.put(BASE_URL + RESOURCE, proxies=PROXIES)
 
 # scatter 60 matches over 4 ladders
 for index in range(60):
     mid = str(30000000 + index + 1)
-    RESOURCE = '/ladder/' + str(40000000 + randint(1, 4)) + "/match/" + mid + "/"
+    RESOURCE = '/ladder/' + str(40000000 + randint(1, 4)) + '/match/' + mid + '/'
     r = requests.put(BASE_URL + RESOURCE, proxies=PROXIES)
 
 # get totals and lists
