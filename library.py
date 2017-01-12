@@ -2,6 +2,9 @@
 to make any action atomic at the REST level(or any other interface)
 TODO: pull out any non-class methods from the data classes, and put them here
 """
+
+import data
+
 from ladder_team import LadderTeam
 from team_account import TeamAccount
 from match_team_score import MatchTeamScore
@@ -99,7 +102,7 @@ def load_ladder_table():
     return True
 
 BASIC_PARAM_SET = {'name': '', 'second_name': '', 'nickname': '', 'email': '',
-                   'mobile': '', 'ranking': Boule.DEFAULT_RANKING, 'proliferate': False}
+                   'mobile': '', 'ranking': data.DEFAULT_RANKING, 'proliferate': False}
 
 
 def create_table(table, passed_params):
@@ -115,7 +118,7 @@ def create_table(table, passed_params):
             Event(type="system", level="info", cat="account", desc=event_text)
             return False
     if table == 'account':
-        my_params['ranking'] = Boule.DEFAULT_RANKING
+        my_params['ranking'] = data.DEFAULT_RANKING
         if Account.details_exist(my_params):
             event_text = "account \"" + my_params["name"] + " " + my_params["second_name"] + \
                          "\"not created, duplicate details"
@@ -140,7 +143,7 @@ def create_table(table, passed_params):
             event_text = "Team not created due to duplicate name"
             Event(type="system", level="info", cat="team", desc=event_text)
             return False
-        my_params['ranking'] = Boule.DEFAULT_RANKING
+        my_params['ranking'] = data.DEFAULT_RANKING
         new_team_instance = Team(my_params)
         new_team_id = new_team_instance.get_id()
         event_text = "Team: " + new_team_id + " created for team \"" + my_params["name"] + "\""

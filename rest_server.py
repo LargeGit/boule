@@ -8,12 +8,32 @@ import io
 import data
 import helper as help
 
-import setup_db
+# import setup_db
+import boule
+import ladder
+import match
+import team
+import account
+import lookup
+
+# pylint: disable=R0904
+
+accounts = []
+teams = []
+ladders = []
+matches = []
+
+
+account_teams_list = []  # put each accounts in multiple teams. id1 = account (unique), id2 = team (0 to many)
+team_ladders_list = []   # put each team in multiple ladders. id1 = team (unique), id2 = ladder (0 to many)
+ladder_matches_list = []  # for each ladder store mulitple matches
+
+match_teams_scores_list = []   # for each match add two teams + scores (tuples) per game
 
 tables = {"account":accounts, "team":teams, "match":matches, "ladder":ladders}
 
 BASIC_PARAM_SET = {'name': '', 'second_name': '', 'nickname': '', 'email': '',
-                   'mobile': '', 'ranking': Boule.DEFAULT_RANKING,
+                   'mobile': '', 'ranking': data.DEFAULT_RANKING,
                    'proliferate': False}
 
 """
@@ -298,9 +318,10 @@ def post_new_account():
     b_body_json = bytesio_body_json.getvalue()          # convert to type<byte> object
     s_body_json = b_body_json.decode(encoding="UTF-8")  # convert to string
     data_dict = json.loads(s_body_json)                 # convert to dictionary
-    temp_item = Account()
-    data.accounts.append(temp_item)
-    for key, value in data_dict:
+    temp_item = account.Account()
+    accounts.append(temp_item)
+    print(data_dict)
+    for key, value in data_dict.items():
         setattr(temp_item, key, value)
     return json.dumps({"response": "success"}, indent=2)
 
@@ -313,8 +334,8 @@ def post_new_team():
     s_body_json = b_body_json.decode(encoding="UTF-8")  # convert to string
     data_dict = json.loads(s_body_json)                 # convert to dictionary
     # FIXME insufficient checking    
-    temp_item = Team(data_dict["first_name"])
-    data.teams.append(temp_item)
+    temp_item = team.Team(data_dict["name"])
+    teams.append(temp_item)
     return json.dumps({"response": "success"}, indent=2)
 
 @route('/ladder', method='POST')
@@ -326,8 +347,8 @@ def post_new_ladder():
     s_body_json = b_body_json.decode(encoding="UTF-8")  # convert to string
     data_dict = json.loads(s_body_json)                 # convert to dictionary
     # FIXME insufficient checking
-    temp_item = Ladder(data_dict["first_name"])
-    data.ladders.append(temp_item)
+    temp_item = ladder.Ladder(data_dict["name"])
+    ladders.append(temp_item)
     return json.dumps({"response": "success"}, indent=2)
 
 @route('/match', method='POST')
@@ -339,8 +360,8 @@ def post_new_match():
     s_body_json = b_body_json.decode(encoding="UTF-8")  # convert to string
     data_dict = json.loads(s_body_json)                 # convert to dictionary
     # FIXME insufficient checking
-    temp_item = Match(data_dict["first_name"])
-    data.matchs.append(temp_item)
+    temp_item = match.Match(data_dict["name"])
+    matches.append(temp_item)
     return json.dumps({"response": "success"}, indent=2)
 
 """
@@ -374,7 +395,8 @@ NOTE: currently only id supported not name
 @route('/ladder/<lid:int>/team/<tid:int>/', method='PUT')
 def put_team_in_ladder(lid, tid):
     """docstring"""
-    teams_ladders_list.append(tid, lid)
+    lookup_item = lookup.Lookup(tid, lid)
+    team_ladders_list.append(lookup_item)
     return True
     # json.dumps({"response": 'failed to update. One of both ids are invalid, or ladder is full'}, indent=2)
 
@@ -383,7 +405,8 @@ def put_team_in_ladder(lid, tid):
 @route('/ladder/<lid:int>/match/<mid:int>/', method='PUT')
 def put_match_in_ladder(lid, mid):
     """docstring"""
-    ladder_matches_list.append(lid, mid)
+    lookup_item = lookup.Lookup(lid, mid)
+    ladder_matches_list.append(lookup_item)
     return True
     # json.dumps({"response": 'failed to update. One of both ids are invalid, or ladder is full'}, indent=2)
 
@@ -392,7 +415,8 @@ def put_match_in_ladder(lid, mid):
 @route('/team/<tid:int>/account/<aid:int>/', method='PUT')
 def put_account_in_team(tid, aid):
     """docstring"""
-    account_teams_list.append(aid, tid)
+    lookup_item = lookup.Lookup(tid, aid)
+    account_teams_list.append(lookup_item)
     return True
     # json.dumps({"response": 'failed to update. One of both ids are invalid, or ladder is full'}, indent=2)
 
@@ -401,8 +425,10 @@ def put_account_in_team(tid, aid):
 @route('/match/<mid:int>/team/<tid:int>/<my_path:path>/', method='PUT')
 def put_team_in_match(mid, tid, my_path):
     """docstring"""
-    s_mid = str(mid)
-    s_tid = str(tid)
+    lookup_item = lookup.Lookup(mid, tid)
+    match_teams_scores_list.append(lookup_item)
+    return True
+    """
     l_score = my_path.split("/")
     result = True
     for item in l_score:
@@ -413,7 +439,7 @@ def put_team_in_match(mid, tid, my_path):
     else:
         return json.dumps({s_mid + " " + s_tid: 'failed to update. One of both ids are invalid, \
                           or match is already full, or too many scores'}, indent=2)
-
+    """
 
 @route('/<table:re:account|team|match|ladder>/<i_id:int>/status/<status:re:active|deleted|suspended|hold|pending|complete>/', method='PUT')
 @route('/<table:re:account|team|match|ladder>/<i_id:int>/status/<status:re:active|deleted|suspended|hold|pending|complete>', method='PUT')

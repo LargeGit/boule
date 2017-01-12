@@ -1,6 +1,7 @@
 """docstring"""
 from boule import Boule
 import time
+import data
 
 class Team(Boule):
     """
@@ -15,20 +16,19 @@ class Team(Boule):
     NAME = 'team'
 
     meta = {"unique_id": 20000000, "author": "large", "version": "1.0.0", "last_saved": ""}
-    DEFAULT_RANKING = 1600
 
     # table is the list that contains all the data for this class
     # Do not expose direcly out of this class, only via accessor   
 
     # initialise a new team
-    def __init__(self, team_name="---", team_ranking=DEFAULT_RANKING):
+    def __init__(self, team_name="---", team_ranking=data.DEFAULT_RANKING):
         super().__init__()
         Team.meta["unique_id"] += 1
         self._id = str(Team.meta["unique_id"])
         self._name = team_name
         self._ranking = team_ranking
 
-   @property
+    @property
     def id(self):
         return self._id 
 

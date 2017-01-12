@@ -24,11 +24,11 @@ class Match(Boule):
     # initialise a new match
     def __init__(self, match_name="---"):
         super().__init__()
-        Ladder.meta["unique_id"] += 1
-        self._id = str(Ladder.meta["unique_id"])
+        Match.meta["unique_id"] += 1
+        self._id = str(Match.meta["unique_id"])
         self._name = match_name
 
-   @property
+    @property
     def id(self):
         return self._id 
 
@@ -36,8 +36,8 @@ class Match(Boule):
     def name(self):
         return self._name
 
-    @mname.setter
-    def match_name(self, value):
+    @name.setter
+    def name(self, value):
         # TODO add any name validation here
         self._modified = time.strftime("%d/%m/%Y %I:%M:%S")
         self._name = value

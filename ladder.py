@@ -28,7 +28,7 @@ class Ladder(Boule):
         self._id = str(Ladder.meta["unique_id"])
         self._name = ladder_name
 
-   @property
+    @property
     def id(self):
         return self._id 
 
@@ -36,7 +36,7 @@ class Ladder(Boule):
     def name(self):
         return self._name
 
-    @lname.setter
+    @name.setter
     def name(self, ladder_name):
         # TODO add any name validation here
         self._modified = time.strftime("%d/%m/%Y %I:%M:%S")

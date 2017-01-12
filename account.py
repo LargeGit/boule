@@ -1,5 +1,6 @@
 """docstring"""
 import time
+import data
 from boule import Boule
 
 
@@ -15,9 +16,6 @@ class Account(Boule):
     """
     NAME = 'account'
 
-    GUEST = 0
-    USER = 1
-    ADMIN = 99
 
     # table is the list that contains all the data for this class
     # Do not expose direcly out of this class, only via accessor
@@ -28,7 +26,7 @@ class Account(Boule):
 
     # initialise a new account
     def __init__(self, first_name="---", second_name="---",
-            role=Account.USER, nickname="---", email="---", mobile="---", ranking=0):
+            role=data.USER, nickname="---", email="---", mobile="---", ranking=0):
         super().__init__()
         Account.meta["unique_id"] += 1
         self._id = str(Account.meta["unique_id"])
@@ -44,7 +42,7 @@ class Account(Boule):
     def id(self):
         return self._id 
 
-   @property
+    @property
     def first_name(self):
         return self._first_name
 
@@ -54,7 +52,7 @@ class Account(Boule):
         self._modified = time.strftime("%d/%m/%Y %I:%M:%S")
         self._first_name = value
 
-   @property
+    @property
     def second_name(self):
         return self._second_name
 
@@ -68,7 +66,7 @@ class Account(Boule):
     def full_name(self):
         return self._first_name + " " + self._second_name
 
-   @property
+    @property
     def role(self):
         return self._role
 
@@ -78,7 +76,7 @@ class Account(Boule):
         self._modified = time.strftime("%d/%m/%Y %I:%M:%S")
         self._role = value
 
-   @property
+    @property
     def nickname(self):
         return self._nickname
 
