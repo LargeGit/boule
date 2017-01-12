@@ -16,7 +16,7 @@ FIRST_NAMES = ['John', 'Sue', 'Bob', 'Steve', 'Andy', 'Dave', 'Dan', 'Simon',
 SECOND_NAMES = ['Andrews', 'Bristow', 'Chambers', 'Davies', 'Edmonds', 'Flintstone',
                 'Gibbons', 'Holmes', 'Innes', 'Jacobs', 'Kelly', 'Lambert', 'McBride',
                 'Pearson', 'Quincey', 'Rowlands', 'Sanders', 'Smith', 'Williams',
-                'Starchan', 'Charlton', 'Sarandon', 'DiCaprio', 'Dench', 'Atkinson',
+                'Strachan', 'Charlton', 'Sarandon', 'DiCaprio', 'Dench', 'Atkinson',
                 'Henry', 'Roberts', 'Singh', 'Chan', 'Rossi']
 TEAM_NAMES = ['The Boulestiful Game', 'Billy Boules', 'Boulster Your Chances',
               'Ten Pin Bouling', 'Street Boulers', 'More Boules You',

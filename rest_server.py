@@ -118,10 +118,9 @@ def get_all_by_status(table, status):
 @route('/<table:re:account|team|match|ladder>/<i_id:int>', method='GET')
 def get_table_by_id(table, i_id):
     """docstring"""
-    result_list = get_item_by_id(tables[table], str(i_id))
+    result_item = help.get_item_by_id(tables[table], str(i_id))
     result = ""
-    for item in result_list:
-        result += json.dumps(item.__dict__, indent=2)
+    result += json.dumps(result_item.__dict__, indent=2)
     return result
 
 
@@ -520,6 +519,10 @@ def delete_database():
     result = delete_all_tables()
     return json.dumps({"response": result}, indent=2)
 
+import setup_db
+
 if __name__ == "__main__":
     # execute only if run as a script
     run(host='localhost', port=8080, debug=True)
+
+
