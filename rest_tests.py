@@ -130,10 +130,12 @@ for index in range(60):
     r = requests.put(BASE_URL + RESOURCE, proxies=PROXIES)
 
 # get totals and lists
-L_RESOURCE = ['/ladder/40000001/active/total', '/ladder/40000001/total',
-              '/match/30000011/active/total', '/match/30000015/total',
-              '/team/20000007/active/total', '/team/20000009/total',
+L_RESOURCE = ['/account/total', '/account/active/total',
+              '/ladder/total', '/ladder/active/total',
+              '/match/total', '/match/active/total',
+              '/team/total', '/team/active/total',
               '/account', '/team', '/match', '/ladder']
 for uri in L_RESOURCE:
     r = requests.get(BASE_URL + uri, proxies=PROXIES)
+    print(uri)
     print(r.text)
