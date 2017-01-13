@@ -168,7 +168,7 @@ class Account(Boule):
             return cls.table[id]["role"]
         else:
             return False
-
+    '''
     # ******************************************
     # ********   data set operations    ********
     # ******************************************
@@ -229,3 +229,4 @@ class Account(Boule):
                     or ((row["mobile"] == d_details["mobile"]) and (row["mobile"] != "")):
                 return True
         return False
+    '''

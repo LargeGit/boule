@@ -38,7 +38,7 @@ class Boule:
 
 
 
-
+    '''
     @classmethod
     def get_by_id(cls, id, *status):
         if id not in cls.table:
@@ -270,3 +270,4 @@ class Boule:
         filtered by status, if provided
         """
         return self.id
+    '''
