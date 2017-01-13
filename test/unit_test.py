@@ -139,29 +139,44 @@ match4 = help.get_item_by_id(matches, "30000004")
 @pytest.mark.parametrize("team_id", [str(20000000 + i) for i in range(4)])
 def test_add_account_to_team(account_id, team_id):
     response = put_account_in_team(account_id, team_id)
-    assert response == "{}"
+    assert response == "[]"
 
 @pytest.mark.parametrize("team_id", [str(20000000 + i) for i in range(4)])
 @pytest.mark.parametrize("ladder_id", [str(40000000 + i) for i in range(4)])    
 def test_add_team_to_ladder(team_id, ladder_id):
     response = put_team_in_ladder(ladder_id, team_id)
-    assert response == "{}"
+    assert response == "[]"
 
 @pytest.mark.parametrize("team_id", [str(20000000 + i) for i in range(4)])
 @pytest.mark.parametrize("match_id", [str(30000000 + i) for i in range(4)])
 def test_add_team_to_match(team_id, match_id):
     response = put_team_in_match(match_id, team_id, False)
-    assert response == "{}"
+    assert response == "[]"
 
 @pytest.mark.parametrize("match_id", [str(30000000 + i) for i in range(4)])
 @pytest.mark.parametrize("ladder_id", [str(40000000 + i) for i in range(4)])    
 def test_add_match_to_ladder(match_id, ladder_id):
     response = put_match_in_ladder(ladder_id, match_id)
-    assert response == "{}"
+    assert response == "[]"
 
+# now test all the gets
+@pytest.mark.parametrize("table, expected", [("account", "1000000"), ("team", "2000000"), ("match", "3000000"), ("ladder", "4000000")])
+def test_get_accounts(table, expected):
+    s_response = get_all(table)
+    assert type(s_response) is str, "return is not a string"
+    result = json.loads(s_response)
+    assert type(result) is list, "return does not convert to a list"
+    assert type(result[0]) is dict, "return value in dict is not of correct type"
+    for i in range(4):
+        assert result[i]["_id"] == expected + str(i + 1), "return value is not correct value"
 '''
-account_team = []
-team_ladder = []   # put each team in multiple ladders. id1 = team (unique), id2 = ladder (0 to many)
-ladder_match = []  # for each ladder store mulitple matches
-match_team_score
+@pytest.mark.parametrize("table, expected1", [("account", "1000000"), ("team", "2000000"), ("match", "3000000"), ("ladder", "4000000")])    
+@pytest.mark.parametrize("status, expected2", [("active", "1000000"), ("deleted", "2000000"), ("suspended", "3000000"), ("hold", "4000000"), ("pending", "4000000"), ("complete", "4000000")])
+def test_get_all_by_status(table, expected1, status, expected2):
+    s_response = get_all_by_status(table, status)
+    assert type(s_response) is str, "return is not a string"
+    result = json.loads(s_response)
+    assert type(result) is list, "return does not convert to a list"
+    # assert type(result[0]) is dict, "return value in dict is not of correct type"
+    assert result[i]["_id"] == expected + str(i + 1), "return value is not correct value"
 '''

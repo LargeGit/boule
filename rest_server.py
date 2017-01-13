@@ -35,13 +35,13 @@ BASIC_PARAM_SET = {'name': '', 'second_name': '', 'nickname': '', 'email': '',
                    'proliferate': False}
 
 def return_helper(result):
-    result_string = ""
+    result_string = "["
     if not result:
-        return "{}"
+        return "[]"
     if type(result) is list: 
         for item in result:
-            result_string = result_string + json.dumps(item.__dict__, indent=2) + "</br>"
-        return result_string
+            result_string = result_string + json.dumps(item.__dict__, indent=2) + ", "
+        return result_string[:-2] + "]"
     return json.dumps(result.__dict__, indent=2)
 
 """
@@ -401,7 +401,7 @@ def put_team_in_ladder(lid, tid):
     """docstring"""
     lookup_item = lookup.Lookup(str(tid), str(lid))
     team_ladder.append(lookup_item)
-    return "{}"
+    return "[]"
     # json.dumps({"response": 'failed to update. One of both ids are invalid, or ladder is full'}, indent=2)
 
 
@@ -411,7 +411,7 @@ def put_match_in_ladder(lid, mid):
     """docstring"""
     lookup_item = lookup.Lookup(str(lid), str(mid))
     ladder_match.append(lookup_item)
-    return "{}"
+    return "[]"
     # json.dumps({"response": 'failed to update. One of both ids are invalid, or ladder is full'}, indent=2)
 
 
@@ -421,7 +421,7 @@ def put_account_in_team(aid, tid):
     """docstring"""
     lookup_item = lookup.Lookup(str(aid), str(tid))
     account_team.append(lookup_item)
-    return "{}"
+    return "[]"
     # json.dumps({"response": 'failed to update. One of both ids are invalid, or ladder is full'}, indent=2)
 
 # TODO this needs sorting out
@@ -431,7 +431,7 @@ def put_team_in_match(mid, tid, my_path):
     """docstring"""
     lookup_item = lookup.Lookup(str(mid), str(tid))
     match_team_score.append(lookup_item)
-    return "{}"
+    return "[]"
     """
     l_score = my_path.split("/")
     result = True
