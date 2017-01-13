@@ -417,7 +417,7 @@ def put_match_in_ladder(lid, mid):
 
 @route('/team/<tid:int>/account/<aid:int>', method='PUT')
 @route('/team/<tid:int>/account/<aid:int>/', method='PUT')
-def put_account_in_team(tid, aid):
+def put_account_in_team(aid, tid):
     """docstring"""
     lookup_item = lookup.Lookup(str(aid), str(tid))
     account_team.append(lookup_item)

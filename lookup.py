@@ -17,8 +17,8 @@ class Lookup(Boule):
     meta = {"unique_id": 0, "author": "large", "version": "1.0.0", "last_saved": ""}
 
     def __init__(self, id1, id2):
-        self._id1 = id1
-        self._id2 = id2
+        self._id1 = str(id1)
+        self._id2 = str(id2)
 
     @property
     def id1(self):
