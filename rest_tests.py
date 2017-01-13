@@ -130,12 +130,27 @@ for index in range(60):
     r = requests.put(BASE_URL + RESOURCE, proxies=PROXIES)
 
 # get totals and lists
-L_RESOURCE = ['/account/total', '/account/active/total',
-              '/ladder/total', '/ladder/active/total',
-              '/match/total', '/match/active/total',
-              '/team/total', '/team/active/total',
-              '/account', '/team', '/match', '/ladder']
+L_RESOURCE = ['/account/total', '/ladder/total', '/match/total', '/team/total',
+              '/account', '/team', '/match', '/ladder',
+              '/account/10000009', '/team/20000004', '/match/30000007', '/ladder/40000003',
+              '/account/10000004/teams', '/team/20000001/matches', '/team/20000007/accounts',
+              '/team/20000002/ladders', '/match/30000002/teams', '/match/30000007/ladders',
+              '/ladder/40000001/teams/', '/ladder/40000003/matches/']
+LIST_OF_STATUS = ['/active', '/hold', '/pending', 
+                  '/suspended', '/deleted', '/complete']
+LIST_OF_TABLE = ['/account', '/team', '/match', '/ladder']
 for uri in L_RESOURCE:
-    r = requests.get(BASE_URL + uri, proxies=PROXIES)
-    print(uri)
+    res = BASE_URL + uri
+    r = requests.get(res, proxies=PROXIES)
+    print(res)
     print(r.text)
+for uri in LIST_OF_TABLE:
+    for sts in LIST_OF_STATUS:
+        res = BASE_URL + uri + sts
+        r = requests.get(res, proxies=PROXIES)
+        print(res)
+        print(r.text)
+        res = BASE_URL + uri + sts + '/total'
+        r = requests.get(res, proxies=PROXIES)
+        print(res)
+        print(r.text)

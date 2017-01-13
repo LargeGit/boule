@@ -23,11 +23,10 @@ teams = []
 ladders = []
 matches = []
 
-account_teams_list = []  # put each accounts in multiple teams. id1 = account (unique), id2 = team (0 to many)
-team_ladders_list = []   # put each team in multiple ladders. id1 = team (unique), id2 = ladder (0 to many)
-ladder_matches_list = []  # for each ladder store mulitple matches
-
-match_teams_scores_list = []   # for each match add two teams + scores (tuples) per game
+account_team = []  # put each accounts in multiple teams. id1 = account (unique), id2 = team (0 to many)
+team_ladder = []   # put each team in multiple ladders. id1 = team (unique), id2 = ladder (0 to many)
+ladder_match = []  # for each ladder store mulitple matches
+match_team_score = []   # for each match add two teams + scores (tuples) per game
 
 tables = {"account":accounts, "team":teams, "match":matches, "ladder":ladders}
 
@@ -145,13 +144,15 @@ def get_size_of_table_status(table, status):
 def get_teams_for_account(i_id):
     """docstring"""
     # get all team lookups for given account id
-    lookup_list = help.get_items_by_value(account_teams_list, "id1", str(i_id))
+    lookup_list = help.get_items_by_value(account_team, "id1", str(i_id))
+    print(lookup_list)
     # for each team lookup, pull the team id, and get the associated team data
     # put the result in a json formatted string
     result_items = []
     for item in lookup_list:
         team = help.get_item_by_id(teams, item.id2)
         result_items.append(team)
+    print("***HERE***", result_items)
     return return_helper(result_items)
 
 
@@ -160,7 +161,7 @@ def get_teams_for_account(i_id):
 def get_accounts_for_team(i_id):
     """docstring"""
     # get all account lookups for given team id
-    lookup_list = help.get_items_by_value(account_teams_list, "id2", str(i_id))
+    lookup_list = help.get_items_by_value(account_team, "id2", str(i_id))
     # for each account lookup, pull the account instance, and get the associated data
     # put the result in a json formatted string
     result_items = []
@@ -175,7 +176,7 @@ def get_accounts_for_team(i_id):
 def get_ladders_for_team(i_id):
     """docstring"""
     # get all ladder lookups for given team id
-    lookup_list = help.get_items_by_value(team_ladders_list, "id1", str(i_id))
+    lookup_list = help.get_items_by_value(team_ladder, "id1", str(i_id))
     # for each lookup, pull the team instance, and get the associated data
     # put the result in a json formatted string
     # print("*** length of lookup list ***", len(lookup_list))
@@ -191,7 +192,7 @@ def get_ladders_for_team(i_id):
 def get_matches_for_team(i_id):
     """docstring"""
     # get all account lookups for given team id
-    lookup_list = help.get_items_by_value(match_teams_scores_list, "id2", str(i_id))
+    lookup_list = help.get_items_by_value(match_team_score, "id2", str(i_id))
     # for each account lookup, pull the account id, and get the associated account data
     # put the result in a json formatted string
     result_items = []
@@ -206,7 +207,7 @@ def get_matches_for_team(i_id):
 def get_teams_for_match(i_id):
     """docstring"""
     # get all match lookups for given team id
-    lookup_list = help.get_items_by_value(match_teams_scores_list, "id1", str(i_id))
+    lookup_list = help.get_items_by_value(match_team_score, "id1", str(i_id))
     # for each account lookup, pull the account id, and get the associated account data
     # put the result in a json formatted string
     result_items = []
@@ -221,7 +222,7 @@ def get_teams_for_match(i_id):
 def get_ladders_for_match(i_id):
     """docstring"""
     # get all account lookups for given team id
-    lookup_list = help.get_items_by_value(ladder_matches_list, "id2", str(i_id))
+    lookup_list = help.get_items_by_value(ladder_match, "id2", str(i_id))
     # for each account lookup, pull the account id, and get the associated account data
     # put the result in a json formatted string
     result_items = []
@@ -236,7 +237,7 @@ def get_ladders_for_match(i_id):
 def get_teams_for_ladder(i_id):
     """docstring"""
     # get all account lookups for given team id
-    lookup_list = help.get_items_by_value(team_ladders_list, "id2", str(i_id))
+    lookup_list = help.get_items_by_value(team_ladder, "id2", str(i_id))
     # for each account lookup, pull the account id, and get the associated account data
     # put the result in a json formatted string
     result_items = []
@@ -251,7 +252,7 @@ def get_teams_for_ladder(i_id):
 def get_matches_for_ladder(i_id):
     """docstring"""
     # get all account lookups for given team id
-    result_list = help.get_items_by_value(ladder_matches_list, "id1", str(i_id))
+    result_list = help.get_items_by_value(ladder_match, "id1", str(i_id))
     result = ""
     # for each account lookup, pull the account id, and get the associated account data
     # put the result in a json formatted string
@@ -396,10 +397,10 @@ NOTE: currently only id supported not name
 
 @route('/ladder/<lid:int>/team/<tid:int>', method='PUT')
 @route('/ladder/<lid:int>/team/<tid:int>/', method='PUT')
-def put_team_in_ladder(tid, lid):
+def put_team_in_ladder(lid, tid):
     """docstring"""
-    lookup_item = lookup.Lookup(tid, lid)
-    team_ladders_list.append(lookup_item)
+    lookup_item = lookup.Lookup(str(tid), str(lid))
+    team_ladder.append(lookup_item)
     return "{}"
     # json.dumps({"response": 'failed to update. One of both ids are invalid, or ladder is full'}, indent=2)
 
@@ -408,8 +409,8 @@ def put_team_in_ladder(tid, lid):
 @route('/ladder/<lid:int>/match/<mid:int>/', method='PUT')
 def put_match_in_ladder(lid, mid):
     """docstring"""
-    lookup_item = lookup.Lookup(lid, mid)
-    ladder_matches_list.append(lookup_item)
+    lookup_item = lookup.Lookup(str(lid), str(mid))
+    ladder_match.append(lookup_item)
     return "{}"
     # json.dumps({"response": 'failed to update. One of both ids are invalid, or ladder is full'}, indent=2)
 
@@ -418,8 +419,8 @@ def put_match_in_ladder(lid, mid):
 @route('/team/<tid:int>/account/<aid:int>/', method='PUT')
 def put_account_in_team(tid, aid):
     """docstring"""
-    lookup_item = lookup.Lookup(tid, aid)
-    account_teams_list.append(lookup_item)
+    lookup_item = lookup.Lookup(str(aid), str(tid))
+    account_team.append(lookup_item)
     return "{}"
     # json.dumps({"response": 'failed to update. One of both ids are invalid, or ladder is full'}, indent=2)
 
@@ -428,8 +429,8 @@ def put_account_in_team(tid, aid):
 @route('/match/<mid:int>/team/<tid:int>/<my_path:path>/', method='PUT')
 def put_team_in_match(mid, tid, my_path):
     """docstring"""
-    lookup_item = lookup.Lookup(mid, tid)
-    match_teams_scores_list.append(lookup_item)
+    lookup_item = lookup.Lookup(str(mid), str(tid))
+    match_team_score.append(lookup_item)
     return "{}"
     """
     l_score = my_path.split("/")
