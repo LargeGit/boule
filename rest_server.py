@@ -42,7 +42,7 @@ def return_helper(result):
         for item in result:
             result_string = result_string + json.dumps(item.__dict__, indent=2) + ", "
         return result_string[:-2] + "]"
-    return json.dumps(result.__dict__, indent=2)
+    return '[' + json.dumps(result.__dict__, indent=2) + ']'
 
 """
 All the GET commands
@@ -145,14 +145,12 @@ def get_teams_for_account(i_id):
     """docstring"""
     # get all team lookups for given account id
     lookup_list = help.get_items_by_value(account_team, "id1", str(i_id))
-    print(lookup_list)
     # for each team lookup, pull the team id, and get the associated team data
     # put the result in a json formatted string
     result_items = []
     for item in lookup_list:
         team = help.get_item_by_id(teams, item.id2)
         result_items.append(team)
-    print("***HERE***", result_items)
     return return_helper(result_items)
 
 

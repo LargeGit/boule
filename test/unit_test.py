@@ -135,33 +135,33 @@ match3 = help.get_item_by_id(matches, "30000003")
 match4 = help.get_item_by_id(matches, "30000004")
 
 
-@pytest.mark.parametrize("account_id", [str(10000000 + i) for i in range(4)])
-@pytest.mark.parametrize("team_id", [str(20000000 + i) for i in range(4)])
+@pytest.mark.parametrize("account_id", [str(10000000 + i + 1) for i in range(4)])
+@pytest.mark.parametrize("team_id", [str(20000000 + i + 1) for i in range(4)])
 def test_add_account_to_team(account_id, team_id):
     response = put_account_in_team(account_id, team_id)
     assert response == "[]"
 
-@pytest.mark.parametrize("team_id", [str(20000000 + i) for i in range(4)])
-@pytest.mark.parametrize("ladder_id", [str(40000000 + i) for i in range(4)])    
+@pytest.mark.parametrize("team_id", [str(20000000 + i + 1) for i in range(4)])
+@pytest.mark.parametrize("ladder_id", [str(40000000 + i + 1) for i in range(4)])    
 def test_add_team_to_ladder(team_id, ladder_id):
     response = put_team_in_ladder(ladder_id, team_id)
     assert response == "[]"
 
-@pytest.mark.parametrize("team_id", [str(20000000 + i) for i in range(4)])
-@pytest.mark.parametrize("match_id", [str(30000000 + i) for i in range(4)])
+@pytest.mark.parametrize("team_id", [str(20000000 + i + 1) for i in range(4)])
+@pytest.mark.parametrize("match_id", [str(30000000 + i + 1) for i in range(4)])
 def test_add_team_to_match(team_id, match_id):
     response = put_team_in_match(match_id, team_id, False)
     assert response == "[]"
 
-@pytest.mark.parametrize("match_id", [str(30000000 + i) for i in range(4)])
-@pytest.mark.parametrize("ladder_id", [str(40000000 + i) for i in range(4)])    
+@pytest.mark.parametrize("match_id", [str(30000000 + i + 1) for i in range(4)])
+@pytest.mark.parametrize("ladder_id", [str(40000000 + i + 1) for i in range(4)])    
 def test_add_match_to_ladder(match_id, ladder_id):
     response = put_match_in_ladder(ladder_id, match_id)
     assert response == "[]"
 
 # now test all the gets
 @pytest.mark.parametrize("table, expected", [("account", "1000000"), ("team", "2000000"), ("match", "3000000"), ("ladder", "4000000")])
-def test_get_accounts(table, expected):
+def test_get_tables(table, expected):
     s_response = get_all(table)
     assert type(s_response) is str, "return is not a string"
     result = json.loads(s_response)
@@ -169,14 +169,106 @@ def test_get_accounts(table, expected):
     assert type(result[0]) is dict, "return value in dict is not of correct type"
     for i in range(4):
         assert result[i]["_id"] == expected + str(i + 1), "return value is not correct value"
-'''
+
 @pytest.mark.parametrize("table, expected1", [("account", "1000000"), ("team", "2000000"), ("match", "3000000"), ("ladder", "4000000")])    
-@pytest.mark.parametrize("status, expected2", [("active", "1000000"), ("deleted", "2000000"), ("suspended", "3000000"), ("hold", "4000000"), ("pending", "4000000"), ("complete", "4000000")])
+@pytest.mark.parametrize("status, expected2", [("active", True), ("deleted", False), ("suspended", False), ("hold", False), ("pending", False), ("complete", False)])
 def test_get_all_by_status(table, expected1, status, expected2):
     s_response = get_all_by_status(table, status)
     assert type(s_response) is str, "return is not a string"
     result = json.loads(s_response)
     assert type(result) is list, "return does not convert to a list"
-    # assert type(result[0]) is dict, "return value in dict is not of correct type"
-    assert result[i]["_id"] == expected + str(i + 1), "return value is not correct value"
-'''
+    if expected2:
+        for i in range(4):
+            assert result[i]["_id"] == expected1 + str(i + 1), "return value is not correct value"
+    else:
+        for i in range(4):
+            assert len(result) == 0, "return list is not empty"
+
+@pytest.mark.parametrize("table, id", [("account", "10000001"), ("team", "20000002"), ("match", "30000003"), ("ladder", "40000004")])
+def test_get_tables_by_id(table, id):
+    s_response = get_table_by_id(table, id)
+    assert type(s_response) is str, "return is not a string"
+    result = json.loads(s_response)
+    assert type(result) is list, "return does not convert to a list"
+    assert len(result) == 1
+    assert result[0]["_id"] == id, "ids donot match expected"
+
+@pytest.mark.parametrize("table, expected", [("account", "4"), ("team", "4"), ("match", "4"), ("ladder", "4")])
+def test_get_table_size(table, expected):
+    s_response = get_size_of_table(table)
+    assert type(s_response) is str, "return is not a string"
+    assert s_response == expected, "table size is not as expected"
+
+@pytest.mark.parametrize("table, expected1", [("account", "4"), ("team", "4"), ("match", "4"), ("ladder", "4")])    
+@pytest.mark.parametrize("status, expected2", [("active", True), ("deleted", False), ("suspended", False), ("hold", False), ("pending", False), ("complete", False)])
+def test_get_table_size_with_status(table, expected1, status, expected2):
+    s_response = get_size_of_table_status(table, status)
+    assert type(s_response) is str, "return is not a string"
+    if expected2:
+        assert s_response == expected1, "table size is not as expected"
+    else:
+        assert s_response == "0", "table size is not as expected"
+
+temp_list = ["20000001", "20000002", "20000003", "20000004"]
+@pytest.mark.parametrize("acc_id, expected_list", [("10000001", temp_list), ("10000002", temp_list), ("10000003", temp_list), ("10000004", temp_list)])
+def test_get_teams_for_account(acc_id, expected_list):
+    s_response = get_teams_for_account(acc_id)
+    assert type(s_response) is str, "return is not a string"
+    result = json.loads(s_response)
+    assert sorted([value['_id'] for value in result]) == sorted(expected_list), "table size is not as expected"
+
+temp_list = ["10000001", "10000002", "10000003", "10000004"]
+@pytest.mark.parametrize("team_id, expected_list", [("20000001", temp_list), ("20000002", temp_list), ("20000003", temp_list), ("20000004", temp_list)])
+def test_get_accounts_for_team(team_id, expected_list):
+    s_response = get_accounts_for_team(team_id)
+    assert type(s_response) is str, "return is not a string"
+    result = json.loads(s_response)
+    assert sorted([value['_id'] for value in result]) == sorted(expected_list), "table size is not as expected"
+
+temp_list = ["40000001", "40000002", "40000003", "40000004"]
+@pytest.mark.parametrize("team_id, expected_list", [("20000001", temp_list), ("20000002", temp_list), ("20000003", temp_list), ("20000004", temp_list)])
+def test_get_ladders_for_team(team_id, expected_list):
+    s_response = get_ladders_for_team(team_id)
+    assert type(s_response) is str, "return is not a string"
+    result = json.loads(s_response)
+    assert sorted([value['_id'] for value in result]) == sorted(expected_list), "table size is not as expected"
+
+temp_list = ["30000001", "30000002", "30000003", "30000004"]
+@pytest.mark.parametrize("team_id, expected_list", [("20000001", temp_list), ("20000002", temp_list), ("20000003", temp_list), ("20000004", temp_list)])
+def test_get_matches_for_team(team_id, expected_list):
+    s_response = get_matches_for_team(team_id)
+    assert type(s_response) is str, "return is not a string"
+    result = json.loads(s_response)
+    assert sorted([value['_id'] for value in result]) == sorted(expected_list), "table size is not as expected"
+
+temp_list = ["20000001", "20000002", "20000003", "20000004"]
+@pytest.mark.parametrize("match_id, expected_list", [("30000001", temp_list), ("30000002", temp_list), ("30000003", temp_list), ("30000004", temp_list)])
+def test_get_teams_for_match(match_id, expected_list):
+    s_response = get_teams_for_match(match_id)
+    assert type(s_response) is str, "return is not a string"
+    result = json.loads(s_response)
+    assert sorted([value['_id'] for value in result]) == sorted(expected_list), "table size is not as expected"
+
+temp_list = ["40000001", "40000002", "40000003", "40000004"]
+@pytest.mark.parametrize("match_id, expected_list", [("30000001", temp_list), ("30000002", temp_list), ("30000003", temp_list), ("30000004", temp_list)])
+def test_get_teams_for_match(match_id, expected_list):
+    s_response = get_ladders_for_match(match_id)
+    assert type(s_response) is str, "return is not a string"
+    result = json.loads(s_response)
+    assert sorted([value['_id'] for value in result]) == sorted(expected_list), "table size is not as expected"
+
+temp_list = ["20000001", "20000002", "20000003", "20000004"]
+@pytest.mark.parametrize("ladder_id, expected_list", [("40000001", temp_list), ("40000002", temp_list), ("40000003", temp_list), ("40000004", temp_list)])
+def test_get_teams_for_ladder(ladder_id, expected_list):
+    s_response = get_teams_for_ladder(ladder_id)
+    assert type(s_response) is str, "return is not a string"
+    result = json.loads(s_response)
+    assert sorted([value['_id'] for value in result]) == sorted(expected_list), "table size is not as expected"
+
+temp_list = ["30000001", "30000002", "30000003", "30000004"]
+@pytest.mark.parametrize("ladder_id, expected_list", [("40000001", temp_list), ("40000002", temp_list), ("40000003", temp_list), ("40000004", temp_list)])
+def test_get_matches_for_ladder(ladder_id, expected_list):
+    s_response = get_matches_for_ladder(ladder_id)
+    assert type(s_response) is str, "return is not a string"
+    result = json.loads(s_response)
+    assert sorted([value['_id'] for value in result]) == sorted(expected_list), "table size is not as expected"
