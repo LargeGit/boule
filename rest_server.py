@@ -400,7 +400,6 @@ def put_team_in_ladder(lid, tid):
     lookup_item = lookup.Lookup(str(tid), str(lid))
     team_ladder.append(lookup_item)
     return "[]"
-    # json.dumps({"response": 'failed to update. One of both ids are invalid, or ladder is full'}, indent=2)
 
 
 @route('/ladder/<lid:int>/match/<mid:int>', method='PUT')
@@ -410,8 +409,7 @@ def put_match_in_ladder(lid, mid):
     lookup_item = lookup.Lookup(str(lid), str(mid))
     ladder_match.append(lookup_item)
     return "[]"
-    # json.dumps({"response": 'failed to update. One of both ids are invalid, or ladder is full'}, indent=2)
-
+    
 
 @route('/team/<tid:int>/account/<aid:int>', method='PUT')
 @route('/team/<tid:int>/account/<aid:int>/', method='PUT')
@@ -420,7 +418,7 @@ def put_account_in_team(aid, tid):
     lookup_item = lookup.Lookup(str(aid), str(tid))
     account_team.append(lookup_item)
     return "[]"
-    # json.dumps({"response": 'failed to update. One of both ids are invalid, or ladder is full'}, indent=2)
+    
 
 # TODO this needs sorting out
 @route('/match/<mid:int>/team/<tid:int>/<my_path:path>', method='PUT')
@@ -449,7 +447,7 @@ def put_table_status(table, i_id, status):
     """docstring"""
     temp_item = help.get_item_by_id(tables[table], str(i_id))
     temp_item.setattr(tables[table], "status", status)
-    return json.dumps({"response": 'status changed successfully'}, indent=2)
+    return return_helper(temp_item)
 
 
 @route('/<table:re:team|match|ladder>/<i_id:int>/name/<name>/', method='PUT')
@@ -458,16 +456,30 @@ def put_table_name(table, i_id, name):
     """docstring"""
     temp_item = help.get_item_by_id(tables[table], str(i_id))
     temp_item.setattr(tables[table], "first_name", name)
-    return json.dumps({"response": 'name changed successfully'}, indent=2)
+    return return_helper(temp_item)
 
 
-@route('/<account>/<i_id:int>/name/<name>/', method='PUT')
-@route('/account>/<i_id:int>/name/<name>', method='PUT')
-def put_account_name(table, i_id, name):
+@route('/account/<i_id:int>/details', method='PUT')
+def put_account_details(i_id):
     """docstring"""
-    temp_item = help.get_item_by_id(accounts, str(i_id))
-    temp_item.setattr(accounts, "first_name", name)
-    return json.dumps({"response": 'name changed successfully'}, indent=2)
+    # TODO add extra checks on data
+    temp_item = help.get_item_by_id(tables["account"], str(i_id))
+    value = request.query.get("first_name", default=None)
+    if value is not None:
+        temp_item.first_name = value
+    value = request.query.get("second_name", default=None)
+    if value is not None:
+        temp_item.second_name = value    
+    value = request.query.get("nickname", default=None)
+    if value is not None:
+        temp_item.nickname = value
+    value = request.query.get("email_name", default=None)
+    if value is not None:
+        temp_item.email_name = value
+    value = request.query.get("mobile", default=None)
+    if value is not None:
+        temp_item.mobile = value
+    return return_helper(temp_item)
 
 
 @route('/database', method='PUT')
