@@ -9,12 +9,16 @@ import data
 import helper as help
 
 # import setup_db
-import boule
+
+from boules import *
+'''
 import ladder
 import match
 import team
 import account
+'''
 import lookup
+
 
 # pylint: disable=R0904
 
@@ -320,7 +324,7 @@ def post_new_account():
     s_body_json = b_body_json.decode(encoding="UTF-8")  # convert to string
     data_dict = json.loads(s_body_json)                 # convert to dictionary
     # FIXME insufficient checking    
-    temp_item = account.Account()
+    temp_item = Account()
     accounts.append(temp_item)
     for key, value in data_dict.items():
         setattr(temp_item, key, value)
@@ -335,7 +339,7 @@ def post_new_team():
     s_body_json = b_body_json.decode(encoding="UTF-8")  # convert to string
     data_dict = json.loads(s_body_json)                 # convert to dictionary
     # FIXME insufficient checking    
-    temp_item = team.Team(data_dict["name"])
+    temp_item = Team(data_dict["name"])
     teams.append(temp_item)
     return return_helper(temp_item)
 
@@ -348,7 +352,7 @@ def post_new_ladder():
     s_body_json = b_body_json.decode(encoding="UTF-8")  # convert to string
     data_dict = json.loads(s_body_json)                 # convert to dictionary
     # FIXME insufficient checking
-    temp_item = ladder.Ladder(data_dict["name"])
+    temp_item = Ladder(data_dict["name"])
     ladders.append(temp_item)
     return return_helper(temp_item)
 
@@ -361,7 +365,7 @@ def post_new_match():
     s_body_json = b_body_json.decode(encoding="UTF-8")  # convert to string
     data_dict = json.loads(s_body_json)                 # convert to dictionary
     # FIXME insufficient checking
-    temp_item = match.Match(data_dict["name"])
+    temp_item = Match(data_dict["name"])
     matches.append(temp_item)
     return return_helper(temp_item)
 

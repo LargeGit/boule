@@ -1,9 +1,9 @@
 """docstring"""
-from boule import Boule
+from boules import Boules
 import time
 
 
-class Ladder(Boule):
+class Ladder(Boules):
     """
     Class Ladder
     Properties: ladder_id, ladder_name, ladder_date_created,

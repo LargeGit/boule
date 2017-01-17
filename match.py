@@ -1,9 +1,9 @@
 """docstring"""
-from boule import Boule
+from boules import Boules
 import time
 
 
-class Match(Boule):
+class Match(Boules):
     """
     Class Match
     Properties: match_id, match_name, match_date_created,

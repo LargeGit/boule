@@ -17,7 +17,7 @@ from ladder import Ladder
 
 from event import Event
 
-from boule import Boule
+from boules import Boules
 
 
 def load_all_tables():
@@ -136,7 +136,7 @@ def create_table(table, passed_params):
             event_text = "Team: " + new_team_id + ", created with name \"" + my_params["name"] + "\""
             Event(type="system", level="info", cat="team", desc=event_text)
             add_account_to_team(new_team_id, s_new_acc_id)
-            add_team_to_ladder(Boule.DEFAULT_LADDER_ID, new_team_id)
+            add_team_to_ladder(Boules.DEFAULT_LADDER_ID, new_team_id)
         return str(s_new_acc_id)
     if table == 'team':
         if Team.get_id_by_name(my_params["name"]):

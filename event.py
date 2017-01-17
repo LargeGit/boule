@@ -1,10 +1,10 @@
 """docstring"""
 import time
 
-from boule import Boule
+from boules import Boules
 
 
-class Event(Boule):
+class Event(Boules):
     """
     Event Class
     attributes:

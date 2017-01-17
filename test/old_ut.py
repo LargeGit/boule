@@ -251,7 +251,7 @@ if not bob_team_id:
 print("Bob's team ID : " + bob_team_id)
 
 # check if Bob Smith is in the Default Ladder
-if not entry_exists(Boule.DEFAULT_LADDER_ID, int(bob_team_id)):
+if not entry_exists(Boules.DEFAULT_LADDER_ID, int(bob_team_id)):
     print("***** ERROR: Team Bob not in the ladder  *******")
     read_ladder("40000001")
     raise SystemExit
@@ -270,7 +270,7 @@ if team_id_by_name("Augustus Gloop's Team"):
     raise SystemExit
 
 # check if Augutus is in the Default Ladder
-if entry_exists(Boule.DEFAULT_LADDER_ID, int(aug_account_id)):
+if entry_exists(Boules.DEFAULT_LADDER_ID, int(aug_account_id)):
     print("***** ERROR: Augustus' Team is in the ladder  *******")
     raise SystemExit
 
@@ -397,7 +397,7 @@ for item in get_all_account_ids():
 print("check that it worked")
 for item in get_all_account_ids():
     item_inst = get_instance_by_id(item)
-    if item_inst.get_status() != Boule.STATUS['deleted']:
+    if item_inst.get_status() != Boules.STATUS['deleted']:
         print("***** ERROR  *******")
         raise SystemExit
 print("Success")
@@ -410,7 +410,7 @@ for item in get_all_team_ids():
 print("check that it worked")
 for item in get_all_team_ids():
     item_inst = get_instance_by_id(item)
-    if item_inst.get_status() != Boule.STATUS['deleted']:
+    if item_inst.get_status() != Boules.STATUS['deleted']:
         print("***** ERROR  *******")
         raise SystemExit
 print("Success")
@@ -423,7 +423,7 @@ for item in get_all_match_ids():
 print("check that it worked")
 for item in get_all_match_ids():
     item_inst = get_instance_by_id(item)
-    if item_inst.get_status() != Boule.STATUS['deleted']:
+    if item_inst.get_status() != Boules.STATUS['deleted']:
         print("***** ERROR  *******")
         raise SystemExit
 print("Success")
@@ -436,7 +436,7 @@ for item in get_all_ladder_ids():
 print("check that it worked")
 for item in get_all_ladder_ids():
     item_inst = get_instance_by_id(item)
-    if item_inst.get_status() != Boule.STATUS['deleted']:
+    if item_inst.get_status() != Boules.STATUS['deleted']:
         print("***** ERROR  *******")
         raise SystemExit
 print("Success")

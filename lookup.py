@@ -1,9 +1,9 @@
 """Class Lookup
 """
-from boule import Boule
+from boules import Boules
 
 
-class Lookup(Boule):
+class Lookup(Boules):
     """
     Class Lookup
     Properties: id1, id2, id_pair

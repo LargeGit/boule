@@ -247,7 +247,7 @@ class BouleCLI(Cmd):
             print("Invalid argument")
 
         # logging.info("Module large_boule_cli: account_database:: %s\n\n", account_database)
-        # logging.info("Module large_boule_cli: accounts:: %s\n\n", Boule.list_of_accounts)
+        # logging.info("Module large_boule_cli: accounts:: %s\n\n", Boules.list_of_accounts)
         # TODO: loading will overwrite any changes - add a confirmation
 
     def do_save(self, args):
@@ -361,5 +361,5 @@ new_ladder = Ladder(params)
 
 if __name__ == '__main__':
     prompt = BouleCLI()
-    prompt.prompt = 'Large Boule Ladder >>'
+    prompt.prompt = 'Large Boules Ladder >>'
     prompt.cmdloop('Starting Large\' CLI prompt...')

@@ -1,9 +1,9 @@
 """docstring"""
-from boule import Boule
+from boules import Boules
 import time
 import data
 
-class Team(Boule):
+class Team(Boules):
     """
     Class Team
     Properties: team_id, team_name, team_date_created,

@@ -3,10 +3,10 @@
 # **** methods and attributes for TaskQueues   ****
 # ***************************************************
 
-from boule import Boule
+from boules import Boules
 
 
-class TaskQueue(Boule):
+class TaskQueue(Boules):
     """
     Class TaskQueue
     Properties: task_id, account_id

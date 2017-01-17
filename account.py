@@ -1,10 +1,10 @@
 """docstring"""
 import time
 import data
-from boule import Boule
+from boules import Boules
 
 
-class Account(Boule):
+class Account(Boules):
     """
     Account Class
     attributes:
@@ -203,7 +203,7 @@ class Account(Boule):
     # ******************************************
     @classmethod
     def get_id_by_name(cls, name_to_find):
-        """overrides the parent version in Boule
+        """overrides the parent version in Boules
         """
         for row in cls.table:
             if name_to_find == row.name + " " + row.second_name:

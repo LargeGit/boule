@@ -1,8 +1,8 @@
 """docstring"""
-from boule import Boule
+from boules import Boules
 
 
-class MatchTeamScore(Boule):
+class MatchTeamScore(Boules):
     """
     Class Team
     Properties: match_id {int}, account_id {int}, score {list of int}
