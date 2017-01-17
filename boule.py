@@ -33,7 +33,8 @@ class Boule:
     @status.setter
     def status(self, value):
         # TODO check vaue is a valid date object
-        self._modified = value
+        self._status = value
+        self._modified = time.strftime("%d/%m/%Y %I:%M:%S")
 
 
 

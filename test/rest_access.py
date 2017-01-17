@@ -52,17 +52,16 @@ for index in range(20):
     RESOURCE = '/account'
     s_body_json = json.dumps(body, indent=2)
     r = requests.post(BASE_URL + RESOURCE, proxies=PROXIES, data=s_body_json)
-    new_acc_id = r.json()["id"]
-    # get new account data
-    RESOURCE = '/account/' + new_acc_id
-    r = requests.get(BASE_URL + RESOURCE, proxies=PROXIES)
-    new_team_name = r.json()["_first_name"] + " " + r.json()["_second_name"] + " team"
+    a_dict = r.json()[0]
+    new_acc_id = a_dict["_id"]
+    new_team_name = a_dict["_first_name"] + " " + a_dict["_second_name"] + " team"
     # create new team
     body = {"name": new_team_name}
     RESOURCE = '/team'
     s_body_json = json.dumps(body, indent=2)
     r = requests.post(BASE_URL + RESOURCE, proxies=PROXIES, data=s_body_json)
-    new_team_id = r.json()["id"]
+    t_dict = r.json()[0]
+    new_team_id = t_dict["_id"]
     # put account in team
     RESOURCE = '/team/' + new_team_id + '/account/' + new_acc_id + '/'
     r = requests.put(BASE_URL + RESOURCE, proxies=PROXIES)

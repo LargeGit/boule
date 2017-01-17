@@ -67,10 +67,10 @@ def test_create_ladder(ladder_name, expected):
     
     assert type(s_response) is str, "return is not a string"
     result = json.loads(s_response)
-    
+    result = result[0]
     assert type(result) is dict, "return does not convert to a dictionary"
-    assert type(result["id"]) is str, "return value in dict is not of correct type"
-    assert result["id"] == expected, "return value is not correct value, expected 40000001"
+    assert type(result["_id"]) is str, "return value in dict is not of correct type"
+    assert result["_id"] == expected, "return value is not correct value, expected 40000001"
    
 ladder1 = help.get_item_by_id(ladders, "40000001")
 ladder2 = help.get_item_by_id(ladders, "40000002")
@@ -86,10 +86,10 @@ def test_create_account(account_details, expected):
         
     assert type(s_response) is str, "return is not a string"
     result = json.loads(s_response)
-        
+    result = result[0]
     assert type(result) is dict, "return does not convert to a dictionary"
-    assert type(result["id"]) is str, "return value in dict is not of correct type"
-    assert result["id"] == expected, "return value is not correct"
+    assert type(result["_id"]) is str, "return value in dict is not of correct type"
+    assert result["_id"] == expected, "return value is not correct"
   
 account1 = help.get_item_by_id(accounts, "10000001")
 account2 = help.get_item_by_id(accounts, "10000002")
@@ -102,13 +102,13 @@ def test_create_team(team_name, expected):
     body = {"name": team_name}
     set_up_post(body)
     s_response = post_new_team()
-    
+
     assert type(s_response) is str, "return is not a string"
     result = json.loads(s_response)
-    
+    result = result[0]    
     assert type(result) is dict, "return does not convert to a dictionary"
-    assert type(result["id"]) is str, "return value in dict is not of correct type"
-    assert result["id"] == expected, "return value is not correct value, expected 40000001"
+    assert type(result["_id"]) is str, "return value in dict is not of correct type"
+    assert result["_id"] == expected, "return value is not correct value, expected 40000001"
     
 team1 = help.get_item_by_id(teams, "20000001")
 team2 = help.get_item_by_id(teams, "20000002")
@@ -121,13 +121,13 @@ def test_create_match(match_name, expected):
     body = {"name": match_name}
     set_up_post(body)
     s_response = post_new_match()
-   
+    
     assert type(s_response) is str, "return is not a string"
     result = json.loads(s_response)
-    
+    result = result[0]
     assert type(result) is dict, "return does not convert to a dictionary"
-    assert type(result["id"]) is str, "return value in dict is not of correct type"
-    assert result["id"] == expected, "return value is not correct value, expected 40000001"
+    assert type(result["_id"]) is str, "return value in dict is not of correct type"
+    assert result["_id"] == expected, "return value is not correct value, expected 40000001"
     
 match1 = help.get_item_by_id(matches, "30000001")
 match2 = help.get_item_by_id(matches, "30000002")
@@ -170,19 +170,26 @@ def test_get_tables(table, expected):
     for i in range(4):
         assert result[i]["_id"] == expected + str(i + 1), "return value is not correct value"
 
-@pytest.mark.parametrize("table, expected1", [("account", "1000000"), ("team", "2000000"), ("match", "3000000"), ("ladder", "4000000")])    
-@pytest.mark.parametrize("status, expected2", [("active", True), ("deleted", False), ("suspended", False), ("hold", False), ("pending", False), ("complete", False)])
-def test_get_all_by_status(table, expected1, status, expected2):
+@pytest.mark.parametrize("table, id_to_change, status", [("account", "10000001", "deleted"), ("team", "20000001", "suspended"), ("match", "30000001", "hold"), ("ladder", "40000001", "pending")])
+def test_put_table_status(table, id_to_change, status):
+    s_response = put_table_status(table, id_to_change, status)
+    assert type(s_response) is str, "return is not a string"
+    result = json.loads(s_response)
+    assert result[0]["_status"] == status, "status not changed"
+
+@pytest.mark.parametrize("table, changed_status", [("account", "deleted"), ("team", "suspended"), ("match", "hold"), ("ladder", "pending")])    
+@pytest.mark.parametrize("status", ["active", "deleted", "suspended", "hold", "pending", "complete"])
+def test_get_all_by_status(table, changed_status, status):
     s_response = get_all_by_status(table, status)
     assert type(s_response) is str, "return is not a string"
     result = json.loads(s_response)
     assert type(result) is list, "return does not convert to a list"
-    if expected2:
-        for i in range(4):
-            assert result[i]["_id"] == expected1 + str(i + 1), "return value is not correct value"
+    if status == "active":
+        assert len(result) == 3, "return list is not right"
+    elif status == changed_status:
+        assert len(result) == 1, "return list is not right"
     else:
-        for i in range(4):
-            assert len(result) == 0, "return list is not empty"
+        assert len(result) == 0
 
 @pytest.mark.parametrize("table, id", [("account", "10000001"), ("team", "20000002"), ("match", "30000003"), ("ladder", "40000004")])
 def test_get_tables_by_id(table, id):
@@ -199,15 +206,17 @@ def test_get_table_size(table, expected):
     assert type(s_response) is str, "return is not a string"
     assert s_response == expected, "table size is not as expected"
 
-@pytest.mark.parametrize("table, expected1", [("account", "4"), ("team", "4"), ("match", "4"), ("ladder", "4")])    
-@pytest.mark.parametrize("status, expected2", [("active", True), ("deleted", False), ("suspended", False), ("hold", False), ("pending", False), ("complete", False)])
-def test_get_table_size_with_status(table, expected1, status, expected2):
+@pytest.mark.parametrize("table, changed_status", [("account", "deleted"), ("team", "suspended"), ("match", "hold"), ("ladder", "pending")])    
+@pytest.mark.parametrize("status", ["active", "deleted", "suspended", "hold", "pending", "complete"])
+def test_get_table_size_with_status(table, changed_status, status):
     s_response = get_size_of_table_status(table, status)
-    assert type(s_response) is str, "return is not a string"
-    if expected2:
-        assert s_response == expected1, "table size is not as expected"
+    if status == "active":
+        assert s_response == "3", "table size is not as expected"
+    elif status == changed_status:
+        assert s_response == "1", "table size is not as expected"
     else:
         assert s_response == "0", "table size is not as expected"
+
 
 temp_list = ["20000001", "20000002", "20000003", "20000004"]
 @pytest.mark.parametrize("acc_id, expected_list", [("10000001", temp_list), ("10000002", temp_list), ("10000003", temp_list), ("10000004", temp_list)])
@@ -272,3 +281,21 @@ def test_get_matches_for_ladder(ladder_id, expected_list):
     assert type(s_response) is str, "return is not a string"
     result = json.loads(s_response)
     assert sorted([value['_id'] for value in result]) == sorted(expected_list), "table size is not as expected"
+
+TEAM_LIST = [("1", "new name"), ("2","another new name"), ("3", "this name has changed"), ("4", "not the same as it was before")]
+@pytest.mark.parametrize("table, prefix", [("team", "2000000"), ("match", "3000000"), ("ladder", "4000000")])
+@pytest.mark.parametrize("my_id, new_name", TEAM_LIST)
+def test_put_table_name(table, prefix, my_id, new_name):
+    s_response = put_table_name(table, prefix + my_id, new_name)
+    assert type(s_response) is str, "return is not a string"
+    result = json.loads(s_response)
+    result = result[0]
+    assert result["_name"] == new_name, "rename has not worked"
+'''
+def test_put_account_details(table, prefix, my_id, new_name):
+    s_response = put_account_details(i_id)
+    assert type(s_response) is str, "return is not a string"
+    result = json.loads(s_response)
+    result = result[0]
+    assert result["_name"] == new_name, "rename has not worked"
+'''

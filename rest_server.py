@@ -30,9 +30,8 @@ match_team_score = []   # for each match add two teams + scores (tuples) per gam
 
 tables = {"account":accounts, "team":teams, "match":matches, "ladder":ladders}
 
-BASIC_PARAM_SET = {'name': '', 'second_name': '', 'nickname': '', 'email': '',
-                   'mobile': '', 'ranking': data.DEFAULT_RANKING,
-                   'proliferate': False}
+BASIC_PARAM_SET = {'name':'---', 'first_name': '---', 'second_name': '---', 'nickname': '---', 'email': '---',
+                   'mobile': '---', 'ranking': data.DEFAULT_RANKING}
 
 def return_helper(result):
     result_string = "["
@@ -325,7 +324,7 @@ def post_new_account():
     accounts.append(temp_item)
     for key, value in data_dict.items():
         setattr(temp_item, key, value)
-    return json.dumps({"id": temp_item.id}, indent=2)
+    return return_helper(temp_item)
 
 @route('/team', method='POST')
 @route('/team/', method='POST')
@@ -338,7 +337,7 @@ def post_new_team():
     # FIXME insufficient checking    
     temp_item = team.Team(data_dict["name"])
     teams.append(temp_item)
-    return json.dumps({"id": temp_item.id}, indent=2)
+    return return_helper(temp_item)
 
 @route('/ladder', method='POST')
 @route('/ladder/', method='POST')
@@ -351,7 +350,7 @@ def post_new_ladder():
     # FIXME insufficient checking
     temp_item = ladder.Ladder(data_dict["name"])
     ladders.append(temp_item)
-    return json.dumps({"id": temp_item.id}, indent=2)
+    return return_helper(temp_item)
 
 @route('/match', method='POST')
 @route('/match/', method='POST')
@@ -364,7 +363,7 @@ def post_new_match():
     # FIXME insufficient checking
     temp_item = match.Match(data_dict["name"])
     matches.append(temp_item)
-    return json.dumps({"id": temp_item.id}, indent=2)
+    return return_helper(temp_item)
 
 """
 All the PUT commands
@@ -446,8 +445,10 @@ def put_team_in_match(mid, tid, my_path):
 def put_table_status(table, i_id, status):
     """docstring"""
     temp_item = help.get_item_by_id(tables[table], str(i_id))
-    temp_item.setattr(tables[table], "status", status)
+    if temp_item:
+        temp_item.status = status
     return return_helper(temp_item)
+    # TODO return not found code here?
 
 
 @route('/<table:re:team|match|ladder>/<i_id:int>/name/<name>/', method='PUT')
@@ -455,7 +456,8 @@ def put_table_status(table, i_id, status):
 def put_table_name(table, i_id, name):
     """docstring"""
     temp_item = help.get_item_by_id(tables[table], str(i_id))
-    temp_item.setattr(tables[table], "first_name", name)
+    if temp_item:
+        temp_item.name = name
     return return_helper(temp_item)
 
 
